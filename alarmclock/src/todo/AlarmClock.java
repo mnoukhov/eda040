@@ -1,4 +1,17 @@
-// TODO: mutex to stop time from moving when it is being changed
+/*
+ * TODO: 
+ * alarm setting
+ * alarm ringing
+ * mutex to stop time from moving when it is being changed
+ * move all shared data into its own file
+ * 	time/alarm should be accessed via methods get, set, increment
+ * 	those methods should be wrapped with a mutex
+ * 
+ * bonus: 
+ * change alarm clock from thread to regular
+ * change Calendar to division
+ *
+ */
 
 package todo;
 
