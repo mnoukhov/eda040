@@ -28,4 +28,8 @@ class Shared {
 	synchronized exitPerson(Person p) {}
 
 	synchronized requestFloor(int floor) {}
+
+	synchronized moveUp() {}
+
+	synchronized moveDown() {}
 }

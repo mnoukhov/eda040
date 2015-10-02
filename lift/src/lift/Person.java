@@ -1,7 +1,6 @@
 package lift;
 
 import java.util.Math;
-import se.lth.cs.realtime.RTError;
 
 class Person extends Thread {
 	int startFloor;
