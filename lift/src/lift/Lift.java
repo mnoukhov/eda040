@@ -17,7 +17,11 @@ class Lift extends Thread {
 			} catch (InterruptedException e) {
 				throw new RTError("Person interrupted: " + e);
 			}
+			shared.getNextFloor();
+			shared.moveToNext();
 		}
+
+
 	}
 }
 

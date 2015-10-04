@@ -17,7 +17,13 @@ class Person extends Thread {
 	}
 
 	public void run() {
+		int delay = 1000*((int)(Math.random()*46.0))
+
+		sleep(delay);
+
 		shared.requestFloor(startFloor)
+
+		//TODO: don't get on lift if going wrong direction
 		try {
 			while (shared.getFloor() != startFloor
 					|| !(shared.isSpace())) wait();

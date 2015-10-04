@@ -3,6 +3,10 @@
  * initialize waitExit/Entry to 0 in constructor
  * protect requestFloor from single person requesting multiple times
  * double check that waitEntry/Exit no race condition between methods
+ * 
+ * MAYBEDO
+ * make lift stop before reaching top (modify getNextFloor)
+ * make exit/enterLift a method that returns boolean of whether the person succeeded, use that to determine whether they should keep waiting
  */
 
 package lift;
@@ -14,7 +18,8 @@ final static int TOTAL_FLOORS;
 
 class Shared {
 	int currentFloor = 0; 		
-	int nextFloor = 1;			
+	int nextFloor = 0;			
+	int direction = 1; 	// 1 for up, -1 for down
 	int load = 0;		// number of people in elevator
 	int[] waitEntry;	// how many people on a floor waiting for the elevator
 	int[] waitExit;		// how many people want to get off at the floor
@@ -78,15 +83,24 @@ class Shared {
 		return true;
 	}
 
-	synchronized void moveUp() {
-		currentFloor += 1;
-		currentDirecion = 1;
+	synchronized void moveToNext() {
+		currentFloor += direction;
 		notifyAll();
 	}
 
-	synchronized void moveDown() {
-		currentFloor -= 1;
-		currentDirection = 0;
-		notifyAll();
+	synchronized void getNextFloor() {
+		if (direction == 1) {
+			if (currentFloor < TOTAL_FLOORS - 1) {
+				nextFloor = TOTAL_FLOORS - 1;
+			} else {
+				nextFloor = 0;
+			}
+		} else {
+			if (currentFloor > 0) {
+				nextFloor = 0;
+			} else {
+				nextFloor = TOTAL_FLOORS - 1;
+			}
+		}
 	}
 }
