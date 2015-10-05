@@ -1,6 +1,6 @@
 package lift;
 
-import java.util.Math;
+import java.lang.Math;
 import se.lth.cs.realtime.RTError;
 import lift.Shared;
 
@@ -11,22 +11,25 @@ class Person extends Thread {
 
 	Person(int totalFloors, Shared shared) {
 		super();
-		startFloor = (int) Math.random()*totalFloors
-		exitFloor = (startFloor + 1 + (int)Math.random()*(totalFloors - 1)) % totalFloors
-		this.shared = shared
+		startFloor = (int) Math.random()*totalFloors;
+		exitFloor = (startFloor + 1 + (int)Math.random()*(totalFloors - 1)) % totalFloors;
+		this.shared = shared;
 	}
 
 	public void run() {
-		int delay = 1000*((int)(Math.random()*46.0))
+		int delay = 1000*((int)(Math.random()*46.0));
 
 		sleep(delay);
 
-		shared.requestFloor(startFloor)
+		shared.requestFloor(startFloor);
 
 		//TODO: don't get on lift if going wrong direction
 		try {
 			while (shared.getFloor() != startFloor
-					|| !(shared.isSpace())) wait();
+					|| !(shared.isSpace())
+					|| shared.isExiting()) {
+				wait();
+			}
 		} catch (InterruptedException e) {
 			throw new RTError("Person interrupted: " + e);
 		}
