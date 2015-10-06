@@ -2,7 +2,6 @@ package lift;
 
 import java.lang.Math;
 import se.lth.cs.realtime.RTError;
-import lift.Shared;
 
 class Person extends Thread {
 	int startFloor;
@@ -19,7 +18,11 @@ class Person extends Thread {
 	public void run() {
 		int delay = 1000*((int)(Math.random()*46.0));
 
-		sleep(delay);
+		try {
+			sleep(delay);
+		} catch (InterruptedException e) {
+			throw new RTError("Person sleep interrupted " + e);
+		}
 
 		shared.requestFloor(startFloor);
 

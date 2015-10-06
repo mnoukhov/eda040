@@ -1,17 +1,13 @@
 /**
  * TODO 
- * protect requestFloor from single person requesting multiple times
- * double check that waitEntry/Exit no race condition between methods
  * 
  * MAYBEDO
- * move liftView methods into Person + Lift so they are non-blocking
+ * protect requestFloor from single person requesting multiple times
  * make lift stop before reaching top (modify getNextFloor)
  * make exit/enterLift a method that returns boolean of whether the person succeeded, use that to determine whether they should keep waiting
  */
 
 package lift;
-
-import lift.LiftView;
 
 class Shared {
 	int maxCapacity;
@@ -40,8 +36,12 @@ class Shared {
 
 	synchronized int getFloor() { return currentFloor; }
 
+	synchronized int getNextFloor() { return nextFloor; }
+
 	synchronized void requestFloor(int startFloor) {
 		waitEntry[startFloor] += 1;	
+		lv.drawLevel(startFloor, waitEntry[startFloor]);
+		notify();
 	}
 
 	synchronized void enterLift(int exitFloor) {
@@ -56,7 +56,6 @@ class Shared {
 		waitExit[currentFloor] -= 1;
 		load -= 1;
 		lv.drawLift(currentFloor, load);
-		lv.drawLevel(currentFloor, waitEntry[currentFloor]);
 		notify();
 	}
 
@@ -92,11 +91,10 @@ class Shared {
 	synchronized void moveToNext() {
 		int oldFloor = currentFloor;
 		currentFloor += direction;
-		lv.moveLift(oldFloor, currentFloor);
 		notifyAll();
 	}
 
-	synchronized void getNextFloor() {
+	synchronized void chooseNextFloor() {
 		if (direction == 1) {
 			if (currentFloor < totalFloors - 1) {
 				nextFloor = totalFloors - 1;
