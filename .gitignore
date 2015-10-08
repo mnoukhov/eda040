@@ -4,7 +4,6 @@
 .mtj.tmp/
 
 # Package Files #
-*.jar
 *.war
 *.ear
 
@@ -18,3 +17,4 @@ hs_err_pid*
 .idea/
 *.iml
 *.eml
+*.classpath

@@ -89,6 +89,12 @@ public class LiftView {
 		LiftView lv = new LiftView();
 		lv.drawLift(0,3);
 		lv.drawLevel(5,4);
+		lv.drawLevel(0, 1);
+        try {
+            Thread.sleep(1000);
+        } catch(InterruptedException e) { }
+		lv.drawLift(0, 4);
+		lv.drawLevel(0, 0);
 		try {
 			Thread.sleep(1000);
 		} catch(InterruptedException e) { }

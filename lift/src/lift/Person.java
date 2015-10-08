@@ -1,22 +1,24 @@
 package lift;
 
-import java.lang.Math;
 import se.lth.cs.realtime.RTError;
+
+import java.lang.Math;
 
 class Person extends Thread {
 	int startFloor;
 	int exitFloor;
 	Shared shared;
 
-	Person(int totalFloors, Shared shared) {
+	Person(Shared shared, int totalFloors) {
 		super();
 		startFloor = (int) Math.random()*totalFloors;
 		exitFloor = (startFloor + 1 + (int)Math.random()*(totalFloors - 1)) % totalFloors;
 		this.shared = shared;
+        System.out.println("Person created");
 	}
 
 	public void run() {
-		int delay = 1000*((int)(Math.random()*46.0));
+		int delay = 1000*((int)(Math.random()*4.0));
 
 		try {
 			sleep(delay);
@@ -25,26 +27,9 @@ class Person extends Thread {
 		}
 
 		shared.requestFloor(startFloor);
-
-		//TODO: don't get on lift if going wrong direction
-		try {
-			while (shared.getFloor() != startFloor
-					|| !(shared.isSpace())
-					|| shared.isExiting()) {
-				wait();
-			}
-		} catch (InterruptedException e) {
-			throw new RTError("Person interrupted: " + e);
-		}
-
+        shared.waitToEnter(startFloor);
 		shared.enterLift(exitFloor);
-		
-		try {
-			while (shared.getFloor() != exitFloor) wait();
-        } catch (InterruptedException e) {
-            throw new RTError("Person interrupted: " + e);
-        }
-
+		shared.waitToExit(exitFloor);
 		shared.exitLift();
 	}
 }
