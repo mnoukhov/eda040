@@ -18,6 +18,7 @@ public class SpinController extends PeriodicThread {
 	}
 
 	public void perform() {
+        System.out.println("mode: " + mode);
 	    SpinEvent req = (SpinEvent) this.mailbox.tryFetch();
 
         if (req != null) {

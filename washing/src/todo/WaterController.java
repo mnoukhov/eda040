@@ -25,6 +25,10 @@ public class WaterController extends PeriodicThread {
             src = (RTThread) req.getSource();
         }
 
+        System.out.println("mode: " + mode);
+        System.out.println("goalLevel: " + goalLevel);
+        System.out.println("level: " + mach.getWaterLevel());
+
         if (mode == WaterEvent.WATER_DRAIN && Double.compare(mach.getWaterLevel(), 0.0) > 0)  {
             mach.setDrain(true);
             mach.setFill(false);
