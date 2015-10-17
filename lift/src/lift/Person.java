@@ -11,8 +11,8 @@ class Person extends Thread {
 
 	Person(Shared shared, int totalFloors) {
 		super();
-		startFloor = (int) Math.random()*totalFloors;
-		exitFloor = (startFloor + 1 + (int)Math.random()*(totalFloors - 1)) % totalFloors;
+		startFloor = (int) (Math.random()*totalFloors);
+		exitFloor = (startFloor + 1 + (int)(Math.random()*(totalFloors - 1))) % totalFloors;
 		this.shared = shared;
         System.out.println("Person created");
 	}
@@ -26,11 +26,12 @@ class Person extends Thread {
 			throw new RTError("Person sleep interrupted " + e);
 		}
 
-		shared.requestFloor(startFloor);
-        shared.waitToEnter(startFloor);
-		shared.enterLift(exitFloor);
-		shared.waitToExit(exitFloor);
-		shared.exitLift();
+		shared.takeLift(startFloor, exitFloor);
+//		shared.requestFloor(startFloor);
+//        shared.waitToEnter(startFloor);
+//		shared.enterLift(exitFloor);
+//		shared.waitToExit(exitFloor);
+//		shared.exitLift();
 	}
 }
 			

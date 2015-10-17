@@ -20,6 +20,7 @@ class Lift extends Thread {
 			shared.chooseDestinationFloor();
 			nextFloor = shared.moveToNext();
             lv.moveLift(currentFloor, nextFloor);
+            currentFloor = nextFloor;
 		}
 	}
 }

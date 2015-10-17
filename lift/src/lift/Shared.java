@@ -16,7 +16,7 @@ class Shared {
 	int maxCapacity;
 	int totalFloors;
 	int currentFloor = 0; 		
-	int nextFloor = 0;
+	int destinationFloor = 0;
 	int direction = 1; 	// 1 for up, -1 for down
 	int load = 0;		// number of people in elevator
 	int[] waitEntry;	// how many people on a floor waiting for the elevator
@@ -66,14 +66,16 @@ class Shared {
         return true;
     }
 
-	synchronized void requestFloor(int startFloor) {
+    // Person
+//	synchronized void requestFloor(int startFloor) {
+    synchronized void takeLift(int startFloor, int exitFloor) {
 		waitEntry[startFloor] += 1;	
 		lv.drawLevel(startFloor, waitEntry[startFloor]);
         System.out.println("request");
 		notifyAll();
-	}
-
-	synchronized void waitToEnter(int startFloor) {
+//	}
+//
+//	synchronized void waitToEnter(int startFloor) {
 		try {
 			while (currentFloor != startFloor || !isSpace() || isExiting()) {
 				wait();
@@ -81,9 +83,9 @@ class Shared {
 		} catch (InterruptedException e) {
 			throw new RTError("Person interrupted: " + e);
 		}
-	}
-
-	synchronized void enterLift(int exitFloor) {
+//	}
+//
+//	synchronized void enterLift(int exitFloor) {
         waitEntry[currentFloor] -= 1;
 		waitExit[exitFloor] += 1;
 		load += 1;
@@ -91,17 +93,17 @@ class Shared {
 		lv.drawLevel(currentFloor, waitEntry[currentFloor]);
         System.out.println("enter");
         notifyAll();
-	}
+//	}
 
-	synchronized void waitToExit (int exitFloor) {
+//	synchronized void waitToExit (int exitFloor) {
 		try {
 			while (currentFloor != exitFloor) wait();
 		} catch (InterruptedException e) {
 			throw new RTError("Person interrupted: " + e);
 		}
-	}
+//	}
 
-	synchronized void exitLift() {
+//	synchronized void exitLift() {
 		waitExit[currentFloor] -= 1;
 		load -= 1;
 		lv.drawLift(currentFloor, load);
@@ -109,7 +111,9 @@ class Shared {
 	}
 
     synchronized void waitToMoveLift() {
+		notifyAll();
         System.out.println("lift should wait");
+        System.out.println("at floor " + currentFloor);
         try {
             while (isEntering() || isExiting() || isEmpty()) {
                 System.out.println("lift waiting");
@@ -123,23 +127,22 @@ class Shared {
 
 	synchronized int moveToNext() {
 		currentFloor += direction;
-		notifyAll();
         return currentFloor;
 	}
 
 	synchronized void chooseDestinationFloor() {
 		if (direction == 1) {
 			if (currentFloor < totalFloors - 1) {
-				nextFloor = totalFloors - 1;
+				destinationFloor = totalFloors - 1;
 			} else {
-				nextFloor = 0;
+				destinationFloor = 0;
                 direction = -1;
 			}
 		} else {
 			if (currentFloor > 0) {
-				nextFloor = 0;
+				destinationFloor = 0;
 			} else {
-				nextFloor = totalFloors - 1;
+				destinationFloor = totalFloors - 1;
                 direction = 1;
 			}
 		}
