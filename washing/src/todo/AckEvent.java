@@ -16,8 +16,8 @@ import se.lth.cs.realtime.event.*;
  * has been carried out.
  *
  * @see TemperatureEvent
- * @see WaterLevelEvent
- * @see SpinLevelEvent
+ * @see WaterEvent
+ * @see SpinEvent
  */
 public class AckEvent extends RTEvent {
 	private static final long serialVersionUID = 1L;

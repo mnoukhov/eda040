@@ -3,16 +3,32 @@ package todo;
 
 import se.lth.cs.realtime.*;
 import done.AbstractWashingMachine;
+import se.lth.cs.realtime.event.RTEvent;
 
 
 public class TemperatureController extends PeriodicThread {
-	// TODO: add suitable attributes
+    AbstractWashingMachine mach;
+    double goalTemp;
+    int mode = TemperatureEvent.TEMP_IDLE;
 
 	public TemperatureController(AbstractWashingMachine mach, double speed) {
 		super((long) (1000/speed)); // TODO: replace with suitable period
+        this.mach = mach;
 	}
 
 	public void perform() {
-		// TODO: implement this method
+        TemperatureEvent req = (TemperatureEvent) this.mailbox.tryFetch();
+        if (req != null) {
+            goalTemp = req.getTemperature();
+            mode = req.getMode();
+        }
+
+        if (mode == TemperatureEvent.TEMP_SET
+                && Double.compare(mach.getTemperature(), goalTemp) < 0
+                && Double.compare(mach.getWaterLevel(), 0.0) > 0) {
+            mach.setHeating(true);
+        } else {
+            mach.setHeating(false);
+        }
 	}
 }

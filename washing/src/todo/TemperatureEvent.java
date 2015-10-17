@@ -21,8 +21,8 @@ public class TemperatureEvent extends RTEvent {
 	// ----------------------------------------------------------- CONSTRUCTOR
 
 	/**
-	 * @param   mode     Temperature regulation mode (TEMP_IDLE, TEMP_SET)
-	 * @param   target   Target temperature to reach and hold
+	 * @param   mode    Temperature regulation mode (TEMP_IDLE, TEMP_SET)
+	 * @param   temp    Target temperature to reach and hold
 	 */
 	public TemperatureEvent(Object source, int mode, double temp) {
 		super(source);
