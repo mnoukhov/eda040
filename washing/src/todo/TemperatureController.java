@@ -10,6 +10,7 @@ public class TemperatureController extends PeriodicThread {
     AbstractWashingMachine mach;
     double goalTemp;
     int mode = TemperatureEvent.TEMP_IDLE;
+    RTThread src;
 
 	public TemperatureController(AbstractWashingMachine mach, double speed) {
 		super((long) (1000/speed)); // TODO: replace with suitable period
@@ -21,6 +22,7 @@ public class TemperatureController extends PeriodicThread {
         if (req != null) {
             goalTemp = req.getTemperature();
             mode = req.getMode();
+            src = (RTThread) req.getSource();
         }
 
         if (mode == TemperatureEvent.TEMP_SET
@@ -28,6 +30,11 @@ public class TemperatureController extends PeriodicThread {
                 && Double.compare(mach.getWaterLevel(), 0.0) > 0) {
             mach.setHeating(true);
         } else {
+            if (mode != TemperatureEvent.TEMP_IDLE) {
+                AckEvent ack = new AckEvent(this);
+                src.putEvent(ack);
+                mode = TemperatureEvent.TEMP_IDLE;
+            }
             mach.setHeating(false);
         }
 	}

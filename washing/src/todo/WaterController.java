@@ -9,6 +9,7 @@ public class WaterController extends PeriodicThread {
     int mode = WaterEvent.WATER_IDLE;
     double goalLevel;
     AbstractWashingMachine mach;
+    RTThread src;
 
 	public WaterController(AbstractWashingMachine mach, double speed) {
 		super((long) (1000/speed)); // TODO: replace with suitable period
@@ -21,6 +22,7 @@ public class WaterController extends PeriodicThread {
         if (req != null) {
             mode = req.getMode();
             goalLevel = req.getLevel();
+            src = (RTThread) req.getSource();
         }
 
         if (mode == WaterEvent.WATER_DRAIN && Double.compare(mach.getWaterLevel(), 0.0) > 0)  {
@@ -32,7 +34,7 @@ public class WaterController extends PeriodicThread {
         } else {
             if (mode != WaterEvent.WATER_IDLE) {
                 AckEvent ack = new AckEvent(this);
-                mach.
+                src.putEvent(ack);
                 mode = WaterEvent.WATER_IDLE;
             }
             mach.setDrain(false);
