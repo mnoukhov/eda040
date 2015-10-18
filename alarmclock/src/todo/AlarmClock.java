@@ -19,25 +19,19 @@ import java.util.Calendar;
 
 import done.*;
 import se.lth.cs.realtime.semaphore.Semaphore;
-import se.lth.cs.realtime.semaphore.MutexSem;
 
 public class AlarmClock extends Thread {
-
+    Shared shared;
 	private static ClockInput	input;
 	private static ClockOutput	output;
-	private static Semaphore	sem; 
-	private int					time;
-	private Semaphore			timeMutex;
-	private int					alarm;
-	private Semaphore			alarmMutex;
-	
+    private static Semaphore sem;
+
 
 	public AlarmClock(ClockInput i, ClockOutput o) {
 		input = i;
 		output = o;
-		sem = input.getSemaphoreInstance();
-		timeMutex = new MutexSem();
-		alarmMutex = new MutexSem();
+        sem = i.getSemaphoreInstance();
+        shared = new Shared();
 	}
 
 	// The AlarmClock thread is started by the simulator. No
@@ -46,83 +40,63 @@ public class AlarmClock extends Thread {
 	// below is a simple alarm clock thread that beeps upon 
 	// each keypress. To be modified in the lab.
 	public void run() {
-		Controller c = new Controller();
-		TimeDisplay t = new TimeDisplay();
+		Controller c = new Controller(shared);
+		TimeDisplay t = new TimeDisplay(shared);
 		c.start();
 		t.start();
 	}
 	
 	public class Controller extends Thread {	
-		
-		public Controller() {			
+		Shared s;
+
+		public Controller(Shared s) {
+            this.s = s;
 		}
 		
 		public void run() {
 			while (true){
-				sem.take();
-				
+                sem.take();
 				int choice = input.getChoice();
-				if (choice == ClockInput.SET_TIME){
-					int newTime = input.getValue();
-					timeMutex.take();
-					time = newTime;
-					timeMutex.give();
-				}
+				if (choice == ClockInput.SET_TIME) {
+                    s.setTime(input.getValue());
+				} else if (choice == ClockInput.SET_ALARM) {
+                    s.setAlarm(input.getValue());
+                } else {
+                    s.setAlarmOn(input.getAlarmFlag());
+                }
+                s.setAlarmRingingOff();
 			}
 		}
 	}
 	
 	public class TimeDisplay extends Thread {
-				
-		public TimeDisplay() {
+        Shared s;
+
+		public TimeDisplay(Shared s) {
+            this.s = s;
 		}
 		
 		public void run() {
-			timeMutex.take();
-			time = setInitalTime();
-			timeMutex.give();
-			
+            s.setTime(currentTime());
+
 			while(true) {
-				timeMutex.take();
-				time = increment(time);
-				output.showTime(time);
-				timeMutex.give();
+				output.showTime(s.incrementTime());
+                s.maybeRingAlarm();
+
+                if (s.isAlarmRinging()) {
+                    output.doAlarm();
+                }
+
 				try {
 					Thread.sleep(1000);
 				} catch (InterruptedException e) {/* Continue termination...*/};
 			}
 		}
-		
-		private int setInitalTime() {
-			Calendar c = Calendar.getInstance();
-			c.setTimeInMillis(System.currentTimeMillis());
-			
-			return c.get(Calendar.HOUR_OF_DAY)*10000 + c.get(Calendar.MINUTE)*100 + c.get(Calendar.SECOND);	
-		}
-		
-		private int increment(int hhmmss) {
-			int seconds = hhmmss % 100;
-			hhmmss /= 100;
-			int minutes = hhmmss % 100;
-			hhmmss /= 100;
-			int hours = hhmmss % 100;
-			
-			seconds += 1;
-			if (seconds >= 60) {
-				minutes += 1;
-				seconds -= 60;
-			}
-			
-			if (minutes >= 60) {
-				hours += 1;
-				minutes -= 60;
-			}
-			
-			if (hours >= 24) {
-				hours -= 24;
-			}
-			
-			return hours*10000 + minutes*100 + seconds;
-		}
+        private int currentTime() {
+            Calendar c = Calendar.getInstance();
+            c.setTimeInMillis(System.currentTimeMillis());
+
+            return c.get(Calendar.HOUR_OF_DAY)*10000 + c.get(Calendar.MINUTE)*100 + c.get(Calendar.SECOND);
+        }
 	}
 }
