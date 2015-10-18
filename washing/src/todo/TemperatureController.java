@@ -5,6 +5,7 @@ import se.lth.cs.realtime.*;
 import done.AbstractWashingMachine;
 import se.lth.cs.realtime.event.RTEvent;
 
+//TODO: get last message
 
 public class TemperatureController extends PeriodicThread {
     AbstractWashingMachine mach;
@@ -25,15 +26,15 @@ public class TemperatureController extends PeriodicThread {
             src = (RTThread) req.getSource();
         }
 
-        if (mode == TemperatureEvent.TEMP_SET
+        if (mode != TemperatureEvent.TEMP_IDLE
                 && Double.compare(mach.getTemperature(), goalTemp) < 0
                 && Double.compare(mach.getWaterLevel(), 0.0) > 0) {
             mach.setHeating(true);
         } else {
-            if (mode != TemperatureEvent.TEMP_IDLE) {
+            if (mode == TemperatureEvent.TEMP_SET) {
                 AckEvent ack = new AckEvent(this);
                 src.putEvent(ack);
-                mode = TemperatureEvent.TEMP_IDLE;
+                mode = TemperatureEvent.TEMP_KEEP;
             }
             mach.setHeating(false);
         }

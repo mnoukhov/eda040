@@ -127,5 +127,14 @@ public abstract class WashingProgram extends RTThread {
 	 * The spin controller
 	 */
 	protected SpinController mySpinController;
+
+    /* waitMinutes in minutes */
+    void waitMinutes(int minutes) {
+        try {
+            sleepUntil(System.currentTimeMillis() + (long) ((double) (minutes * 60 * 1000) / mySpeed));
+        } catch (RTInterrupted e) {
+            System.err.println("machine interrupted");
+        }
+    }
 }
 

@@ -55,6 +55,10 @@ public class TemperatureEvent extends RTEvent {
 	/** Reach and hold the given temperature */
 	public static final int TEMP_SET   = 1;
 
+    /* extra thing I'm using because it makes life easier */
+    /** Hold temperature after you've reached it */
+    public static final int TEMP_KEEP  = 2;
+
 	// -------------------------------------------- PRIVATE INSTANCE VARIABLES
 
 	// Temperature regulation mode

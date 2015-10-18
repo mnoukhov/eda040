@@ -45,33 +45,36 @@ class WashingProgram3 extends WashingProgram {
 	 * when the start() method is called.
 	 */
 	protected void wash() throws InterruptedException {
-
         System.out.println("start");
-		// Switch of temp regulation
-		myTempController.putEvent(new TemperatureEvent(this,
-				TemperatureEvent.TEMP_IDLE,
-				0.0));
 
+		// Switch of temp regulation
         System.out.println("temp");
+		myTempController.putEvent(new TemperatureEvent(this,
+                TemperatureEvent.TEMP_IDLE,
+                0.0));
+
+
 		// Switch off spin
-		mySpinController.putEvent(new SpinEvent(this, SpinEvent.SPIN_OFF));
         System.out.println("spin");
+		mySpinController.putEvent(new SpinEvent(this, SpinEvent.SPIN_OFF));
 
 		// Drain
-		myWaterController.putEvent(new WaterEvent(this,
-				WaterEvent.WATER_DRAIN,
-				0.0));
-		mailbox.doFetch(); // Wait for Ack
         System.out.println("drain");
+		myWaterController.putEvent(new WaterEvent(this,
+                WaterEvent.WATER_DRAIN,
+                0.0));
+		mailbox.doFetch(); // Wait for Ack
 
 		// Set water regulation to idle => drain pump stops
-		myWaterController.putEvent(new WaterEvent(this,
-				WaterEvent.WATER_IDLE,
-				0.0));
         System.out.println("finish drain");
+		myWaterController.putEvent(new WaterEvent(this,
+                WaterEvent.WATER_IDLE,
+                0.0));
 
 		// Unlock
-		myMachine.setLock(false);
         System.out.println("unlock");
+		myMachine.setLock(false);
+
+        System.out.println("done");
 	}
 }

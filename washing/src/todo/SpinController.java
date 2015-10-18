@@ -8,7 +8,7 @@ import done.AbstractWashingMachine;
 public class SpinController extends PeriodicThread {
     int mode = SpinEvent.SPIN_OFF;
     int direction = AbstractWashingMachine.SPIN_RIGHT;
-    int slowSpinTime = 0;
+    long slowSpinChangeTime = -1;
     AbstractWashingMachine mach;
 
 
@@ -18,7 +18,6 @@ public class SpinController extends PeriodicThread {
 	}
 
 	public void perform() {
-        System.out.println("mode: " + mode);
 	    SpinEvent req = (SpinEvent) this.mailbox.tryFetch();
 
         if (req != null) {
@@ -26,21 +25,24 @@ public class SpinController extends PeriodicThread {
         }
 
         if (mode == SpinEvent.SPIN_SLOW) {
-            //TODO check if thread took longer than period?
-            slowSpinTime += this.getPeriod();
-            if (slowSpinTime > 60000) {
+            long now = System.currentTimeMillis();
+            if (slowSpinChangeTime == -1) {
+                slowSpinChangeTime = now + 60*getPeriod();
+            } else if (now >= slowSpinChangeTime) {
                 if (direction == AbstractWashingMachine.SPIN_RIGHT)
                     direction = AbstractWashingMachine.SPIN_LEFT;
                 else
                     direction = AbstractWashingMachine.SPIN_RIGHT;
 
-                slowSpinTime = 0;
+                slowSpinChangeTime = now + 60*getPeriod();
             }
             mach.setSpin(direction);
         } else if (mode == SpinEvent.SPIN_FAST && Double.compare(mach.getWaterLevel(), 0.0) == 0) {
             mach.setSpin(AbstractWashingMachine.SPIN_FAST);
+            slowSpinChangeTime = -1;
         } else {
             mach.setSpin(AbstractWashingMachine.SPIN_OFF);
+            slowSpinChangeTime = -1;
         }
     }
 }
