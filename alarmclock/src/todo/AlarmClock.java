@@ -64,7 +64,7 @@ public class AlarmClock extends Thread {
                 sem.take();
                 newChoice = input.getChoice();
                 if (newChoice != oldChoice) {
-                    if (oldChoice == ClockInput.SET_TIME) {
+                    if (oldChoice == ClockInput.SET_TIME && newChoice == ClockInput.SHOW_TIME) {
                         s.setTime(input.getValue());
                     } else if (oldChoice == ClockInput.SET_ALARM) {
                         s.setAlarm(input.getValue());
