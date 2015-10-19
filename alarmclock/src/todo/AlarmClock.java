@@ -57,18 +57,23 @@ public class AlarmClock extends Thread {
 		}
 		
 		public void run() {
-            int choice;
+            int newChoice;
+            int oldChoice = -1;
+
 			while (true){
-                choice = input.getChoice();
                 sem.take();
-				if (choice == ClockInput.SET_TIME) {
-                    s.setTime(input.getValue());
-				} else if (choice == ClockInput.SET_ALARM) {
-                    s.setAlarm(input.getValue());
-                } else {
-                    s.setAlarmOn(input.getAlarmFlag());
+                newChoice = input.getChoice();
+                if (newChoice != oldChoice) {
+                    if (oldChoice == ClockInput.SET_TIME) {
+                        s.setTime(input.getValue());
+                    } else if (oldChoice == ClockInput.SET_ALARM) {
+                        s.setAlarm(input.getValue());
+                    } else {
+                        s.setAlarmOn(input.getAlarmFlag());
+                    }
                 }
                 s.setAlarmRingingOff();
+                oldChoice = newChoice;
 			}
 		}
 	}
