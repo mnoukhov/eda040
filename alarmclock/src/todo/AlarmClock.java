@@ -25,13 +25,11 @@ public class AlarmClock extends Thread {
     Shared shared;
 	private static ClockInput	input;
 	private static ClockOutput	output;
-    private static Semaphore sem;
 
 
 	public AlarmClock(ClockInput i, ClockOutput o) {
 		input = i;
 		output = o;
-        sem = i.getSemaphoreInstance();
         shared = new Shared();
 	}
 
@@ -50,6 +48,7 @@ public class AlarmClock extends Thread {
 	public class Controller extends RTThread {
 		Shared s;
         ClockInput input;
+        Semaphore sem;
 
 		public Controller(Shared s, ClockInput input) {
             this.s = s;
@@ -57,24 +56,25 @@ public class AlarmClock extends Thread {
 		}
 		
 		public void run() {
-            int newChoice;
-            int oldChoice = -1;
-
-			while (true){
-                sem.take();
-                newChoice = input.getChoice();
-                if (newChoice != oldChoice) {
-                    if (oldChoice == ClockInput.SET_TIME && newChoice == ClockInput.SHOW_TIME) {
-                        s.setTime(input.getValue());
-                    } else if (oldChoice == ClockInput.SET_ALARM) {
-                        s.setAlarm(input.getValue());
-                    } else {
-                        s.setAlarmOn(input.getAlarmFlag());
-                    }
-                }
-                s.setAlarmRingingOff();
-                oldChoice = newChoice;
-			}
+	        sem = input.getSemaphoreInstance();
+	        int prevChoice = ClockInput.SHOW_TIME;
+	        
+	        while (true) {
+	        	sem.take();
+	        	
+	        	s.setAlarmRingingOff();
+	        	s.setAlarmOn(input.getAlarmFlag());
+	        	
+	        	int choice = input.getChoice();
+	        	int value = input.getValue();
+	        	
+	        	if (prevChoice != choice) {
+	        		if (prevChoice == ClockInput.SET_ALARM) s.setAlarm(value);
+	        		else if (prevChoice == ClockInput.SET_TIME  && choice == ClockInput.SHOW_TIME) s.setTime(value);
+	        	}
+	        	prevChoice = choice;
+	        	
+	        }
 		}
 	}
 	
