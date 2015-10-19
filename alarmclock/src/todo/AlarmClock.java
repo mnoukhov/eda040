@@ -18,6 +18,7 @@ package todo;
 import java.util.Calendar;
 
 import done.*;
+import se.lth.cs.realtime.RTThread;
 import se.lth.cs.realtime.semaphore.Semaphore;
 
 public class AlarmClock extends Thread {
@@ -46,7 +47,7 @@ public class AlarmClock extends Thread {
 		t.start();
 	}
 	
-	public class Controller extends Thread {	
+	public class Controller extends RTThread {
 		Shared s;
         ClockInput input;
 
@@ -56,9 +57,10 @@ public class AlarmClock extends Thread {
 		}
 		
 		public void run() {
+            int choice;
 			while (true){
+                choice = input.getChoice();
                 sem.take();
-				int choice = input.getChoice();
 				if (choice == ClockInput.SET_TIME) {
                     s.setTime(input.getValue());
 				} else if (choice == ClockInput.SET_ALARM) {
@@ -71,7 +73,7 @@ public class AlarmClock extends Thread {
 		}
 	}
 	
-	public class TimeDisplay extends Thread {
+	public class TimeDisplay extends RTThread {
         Shared s;
         ClockOutput output;
 
@@ -85,15 +87,12 @@ public class AlarmClock extends Thread {
 
 			while(true) {
 				output.showTime(s.incrementTime());
-                s.maybeRingAlarm();
 
                 if (s.isAlarmRinging()) {
                     output.doAlarm();
                 }
 
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {/* Continue termination...*/};
+                sleepUntil(System.currentTimeMillis() + 1000);
 			}
 		}
         private int currentTime() {

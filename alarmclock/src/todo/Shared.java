@@ -80,6 +80,7 @@ public class Shared {
         timeMutex.take();
         time = incrementTime(time);
         timeMutex.give();
+        maybeRingAlarm();
         return time;
     }
 
