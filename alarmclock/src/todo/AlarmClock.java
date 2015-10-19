@@ -40,17 +40,19 @@ public class AlarmClock extends Thread {
 	// below is a simple alarm clock thread that beeps upon 
 	// each keypress. To be modified in the lab.
 	public void run() {
-		Controller c = new Controller(shared);
-		TimeDisplay t = new TimeDisplay(shared);
+		Controller c = new Controller(shared, input);
+		TimeDisplay t = new TimeDisplay(shared, output);
 		c.start();
 		t.start();
 	}
 	
 	public class Controller extends Thread {	
 		Shared s;
+        ClockInput input;
 
-		public Controller(Shared s) {
+		public Controller(Shared s, ClockInput input) {
             this.s = s;
+            this.input = input;
 		}
 		
 		public void run() {
@@ -71,9 +73,11 @@ public class AlarmClock extends Thread {
 	
 	public class TimeDisplay extends Thread {
         Shared s;
+        ClockOutput output;
 
-		public TimeDisplay(Shared s) {
+		public TimeDisplay(Shared s, ClockOutput o) {
             this.s = s;
+            this.output = o;
 		}
 		
 		public void run() {
