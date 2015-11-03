@@ -125,12 +125,11 @@ class Shared {
         System.out.println("lift stopped waiting");
     }
 
-	synchronized int moveToNext() {
+	synchronized void moveToNext() {
 		currentFloor += direction;
-        return currentFloor;
 	}
 
-	synchronized void chooseDestinationFloor() {
+	synchronized int chooseDestinationFloor() {
 		if (direction == 1) {
 			if (currentFloor < totalFloors - 1) {
 				destinationFloor = totalFloors - 1;
@@ -146,5 +145,6 @@ class Shared {
                 direction = 1;
 			}
 		}
+        return currentFloor + direction;
 	}
 }

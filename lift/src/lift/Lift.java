@@ -17,10 +17,10 @@ class Lift extends Thread {
         int nextFloor;
 		while (true) {
 			shared.waitToMoveLift();
-			shared.chooseDestinationFloor();
-			nextFloor = shared.moveToNext();
+			nextFloor = shared.chooseDestinationFloor();
             lv.moveLift(currentFloor, nextFloor);
             currentFloor = nextFloor;
+			shared.moveToNext();
 		}
 	}
 }
