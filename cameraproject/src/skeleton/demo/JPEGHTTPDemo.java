@@ -1,7 +1,7 @@
 package skeleton.demo;
 
 import skeleton.server.JPEGHTTPServer;
-import skeleton.client.JPEGHTTPClient;
+import skeleton.client.Main;
 
 public class JPEGHTTPDemo {
 
@@ -33,7 +33,7 @@ public class JPEGHTTPDemo {
 	
 	private static class Client extends Thread {
 		public void run() {
-			JPEGHTTPClient.main(new String[] {"localhost", "6077"});
+			Main.main(new String[] {"localhost", "6077", "localhost", "6078"});
 		}
 	}
 }
