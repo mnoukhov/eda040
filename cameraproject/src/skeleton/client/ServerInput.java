@@ -6,18 +6,23 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.concurrent.BlockingQueue;
 
 /**
  * Created by michael on 02/12/15.
  */
 public class ServerInput extends Thread {
+    Client c;
     String server;
     int port;
+    BlockingQueue<Image> imageQueue;
     byte [] jpeg = new byte[AxisM3006V.IMAGE_BUFFER_SIZE];
 
-    public ServerInput(String server, int port) {
+    public ServerInput(Client c, String server, int port, BlockingQueue<Image> imageQueue) {
+        this.c = c;
         this.server = server;
         this.port = port;
+        this.imageQueue = imageQueue;
     }
 
     public void run() {
@@ -68,6 +73,7 @@ public class ServerInput extends Thread {
             } catch (IOException e) {
                 System.out.println("Error when receiving image.");
             }
+            imageQueue.add(new Image(jpeg));
         }
     }
     // -------------------------------------------------------- PRIVATE METHODS

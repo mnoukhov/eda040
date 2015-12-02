@@ -2,9 +2,8 @@ package skeleton.client;
 
 import javax.swing.*;
 import java.awt.*;
-/**
- * Created by michael on 02/12/15.
- */
+import java.awt.Image;
+
 public class ImagePanel extends JPanel {
     ImageIcon icon;
 

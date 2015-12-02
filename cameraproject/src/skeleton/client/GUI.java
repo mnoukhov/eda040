@@ -5,12 +5,14 @@ import java.awt.*;
 
 class GUI extends JFrame {
 
+    Client c;
     ImagePanel imagePanel;
     JButton button;
     boolean firstCall = true;
 
-    public GUI() {
+    public GUI(Client c) {
         super();
+        this.c = c;
         imagePanel = new ImagePanel();
         button = new JButton("Get image");
         button.addActionListener(new ButtonHandler(this));
@@ -19,10 +21,9 @@ class GUI extends JFrame {
         this.getContentPane().add(button, BorderLayout.SOUTH);
         this.setLocationRelativeTo(null);
         this.pack();
-        refreshImage();
     }
 
-    public void refreshImage() {
+    public void refreshImage(byte[] jpeg) {
         imagePanel.refresh(jpeg);
         if (firstCall) {
             this.pack();
