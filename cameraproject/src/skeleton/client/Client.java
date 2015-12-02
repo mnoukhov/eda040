@@ -18,12 +18,13 @@ public class Client {
     private OutputStream camera1Output;
     private OutputStream camera2Output;
     private boolean connected = false;
+    private boolean sync = false;
     private GUI gui;
 //    private MODE mode;
     private BlockingQueue<Image> camera1ImageQ;
     private BlockingQueue<Image> camera2ImageQ;
-//    private PictureOutput camera1PictureOutput;
-//    private PictureOutput camera2PictureOutput;
+    private ImageOutput camera1ImageOutput;
+    private ImageOutput camera2ImageOutput;
 
 
     /**
@@ -42,11 +43,29 @@ public class Client {
                 camera1ImageQ
         );
         this.serverInput.start();
+
         this.gui = new GUI(this);
+
+        this.camera1ImageOutput = new ImageOutput(
+                this,
+                this.gui.getImagePanel(),
+                this.camera1ImageQ
+        );
+        this.camera1ImageOutput.start();
+
 
 //        pT1 = new PictureUpdateThread(gui, picQueue1, 1);
 //        pT2 = new PictureUpdateThread(gui, picQueue2, 2);
 //        pT1.start();
 //        pT2.start();
     }
+
+    public synchronized void setSync(boolean sync) {
+        this.sync = sync;
+    }
+
+    public synchronized boolean isSync() {
+        return sync;
+    }
+
 }

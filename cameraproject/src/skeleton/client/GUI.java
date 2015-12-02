@@ -21,6 +21,8 @@ class GUI extends JFrame {
         this.getContentPane().add(button, BorderLayout.SOUTH);
         this.setLocationRelativeTo(null);
         this.pack();
+        //TODO: figure this out
+        this.setVisible(true);
     }
 
     public void refreshImage(byte[] jpeg) {
@@ -30,6 +32,10 @@ class GUI extends JFrame {
             this.setVisible(true);
             firstCall = false;
         }
+    }
+
+    public ImagePanel getImagePanel() {
+        return imagePanel;
     }
 }
 
