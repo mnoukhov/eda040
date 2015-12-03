@@ -71,8 +71,8 @@ public class ServerInput extends Thread {
                     int len = Integer.parseInt(getLine(is));
                     System.out.println("Reading image size " + len);
                     getInputBytes(is, jpeg, len);
-                    viewer.refreshImage(jpeg);
-//                    imageQueue.add(new Image(jpeg));
+//                    viewer.refreshImage(jpeg);
+                    imageQueue.add(new Image(jpeg));
                 } else if (cmd.equals(CMD_MOVIE)) {
                     System.out.println("CMD: movie");
                     c.setMode(MODE.MOVIE);

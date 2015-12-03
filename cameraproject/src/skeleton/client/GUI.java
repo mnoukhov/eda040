@@ -21,7 +21,7 @@ class GUI extends JFrame {
         this.getContentPane().add(button, BorderLayout.SOUTH);
         this.setLocationRelativeTo(null);
         this.pack();
-        this.setSize(640, 480);
+//        this.setSize(640, 480);
         //TODO: figure this out
         this.setVisible(true);
     }
