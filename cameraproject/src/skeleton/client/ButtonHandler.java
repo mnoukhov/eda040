@@ -15,7 +15,7 @@ public class ButtonHandler implements ActionListener {
     }
 
     public void actionPerformed(ActionEvent evt) {
-        gui.refreshImage();
+//        gui.refreshImage();
     }
 }
 

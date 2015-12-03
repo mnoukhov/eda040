@@ -73,6 +73,13 @@ public class ServerInput extends Thread {
             } catch (IOException e) {
                 System.out.println("Error when receiving image.");
             }
+
+            try {
+                sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
             imageQueue.add(new Image(jpeg));
         }
     }

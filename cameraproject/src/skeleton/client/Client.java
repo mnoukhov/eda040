@@ -1,10 +1,8 @@
 package skeleton.client;
 
-import jdk.nashorn.internal.ir.Block;
+import static skeleton.client.Constants.*;
 
 import java.io.OutputStream;
-import java.util.Queue;
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.PriorityBlockingQueue;
 
@@ -20,7 +18,7 @@ public class Client {
     private boolean connected = false;
     private boolean sync = false;
     private GUI gui;
-//    private MODE mode;
+    private MODE mode;
     private BlockingQueue<Image> camera1ImageQ;
     private BlockingQueue<Image> camera2ImageQ;
     private ImageOutput camera1ImageOutput;
@@ -53,19 +51,33 @@ public class Client {
         );
         this.camera1ImageOutput.start();
 
-
-//        pT1 = new PictureUpdateThread(gui, picQueue1, 1);
-//        pT2 = new PictureUpdateThread(gui, picQueue2, 2);
-//        pT1.start();
-//        pT2.start();
     }
 
     public synchronized void setSync(boolean sync) {
         this.sync = sync;
     }
 
-    public synchronized boolean isSync() {
-        return sync;
+    // maybe sync the image and then return true if everything worked, false if tried to sync but could not
+    public synchronized boolean maybeSyncUntil(long displayTime) {
+        if (sync) {
+            long waitTime;
+            do {
+                waitTime = displayTime - System.currentTimeMillis();
+                try {
+                    wait(waitTime);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            } while (waitTime > 0);
+
+            if (waitTime < SYNC_WAITING_WINDOW) {
+                return false; // we waited too long!
+            }
+        }
+        return true;
     }
 
+//    public synchronized connect(String[] addressPort) {
+//
+//    }
 }

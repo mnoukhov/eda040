@@ -1,10 +1,10 @@
 package skeleton.client;
 
+import static skeleton.client.Constants.*;
+
 import java.util.Arrays;
 
 public class Image implements Comparable<Image> {
-    private final long EXTRA_TIME = 200;
-
     byte[] jpeg;
     long timestamp;
     long timeToDisplay;
@@ -14,7 +14,15 @@ public class Image implements Comparable<Image> {
         this.jpeg = data;
 //        this.timestamp =
 //        this.delay = System.currentTimeMillis() - timestamp;
-//        this.timeToDisplay = timestamp + EXTRA_TIME - delay;
+//        this.timeToDisplay = timestamp + EXTRA_SYNC_TIME - delay;
+    }
+
+    public long getTimeToDisplay() {
+        return timeToDisplay;
+    }
+
+    public byte[] getJpeg() {
+        return jpeg;
     }
 
     public int compareTo(Image other) {

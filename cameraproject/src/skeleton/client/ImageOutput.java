@@ -1,5 +1,7 @@
 package skeleton.client;
 
+import static skeleton.client.Constants.*;
+
 import java.util.concurrent.BlockingQueue;
 
 public class ImageOutput extends Thread {
@@ -14,15 +16,29 @@ public class ImageOutput extends Thread {
     }
 
     public void run() {
+        Image next;
+        boolean success;
+        int failures = 0;
         while (true) {
             try {
-                Image next = imageQueue.take();
+                next = imageQueue.take();
+                success = c.maybeSyncUntil(next.getTimeToDisplay());
+
+                if (!success) {
+                    failures += 1;
+                } else {
+                    failures = 0;
+                }
+
+                if (failures > MAX_FAILURES) {
+                    c.setSync(false);
+                    failures = 0;
+                }
+
+                imagePanel.refresh(next.getJpeg());
+
             } catch (InterruptedException e) {
                 e.printStackTrace();
-            }
-
-            if (c.isSync()) {
-                c.
             }
         }
     }
