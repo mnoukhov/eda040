@@ -5,17 +5,17 @@ import java.awt.*;
 
 class GUI extends JFrame {
 
-    Client c;
+    ClientManager c;
     ImagePanel imagePanel;
     JButton button;
     boolean firstCall = true;
 
-    public GUI(Client c) {
+    public GUI(ClientManager c) {
         super();
         this.c = c;
         imagePanel = new ImagePanel();
-        button = new JButton("Get image");
-        button.addActionListener(new ButtonHandler(this));
+        button = new JButton("Connect");
+        button.addActionListener(new ConnectButton(c));
         this.getContentPane().setLayout(new BorderLayout());
         this.getContentPane().add(imagePanel, BorderLayout.NORTH);
         this.getContentPane().add(button, BorderLayout.SOUTH);

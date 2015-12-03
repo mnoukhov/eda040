@@ -5,11 +5,11 @@ import static skeleton.client.Constants.*;
 import java.util.concurrent.BlockingQueue;
 
 public class ImageOutput extends Thread {
-    private Client c;
+    private ClientManager c;
     private ImagePanel imagePanel;
     private BlockingQueue<Image> imageQueue;
 
-    public ImageOutput(Client c, ImagePanel ip, BlockingQueue<Image> iq) {
+    public ImageOutput(ClientManager c, ImagePanel ip, BlockingQueue<Image> iq) {
         this.c = c;
         this.imagePanel = ip;
         this.imageQueue = iq;

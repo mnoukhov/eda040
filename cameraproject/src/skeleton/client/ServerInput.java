@@ -1,89 +1,79 @@
 package skeleton.client;
 
+import static skeleton.client.Constants.*;
+
 import se.lth.cs.eda040.fakecamera.AxisM3006V;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.Socket;
+import java.util.Arrays;
 import java.util.concurrent.BlockingQueue;
 
 /**
  * Created by michael on 02/12/15.
  */
 public class ServerInput extends Thread {
-    Client c;
-    String server;
-    int port;
+    ClientManager c;
+    InputStream is;
     BlockingQueue<Image> imageQueue;
-    byte [] jpeg = new byte[AxisM3006V.IMAGE_BUFFER_SIZE];
+    byte[] cmd = new byte[4];
+    byte[] jpeg;
 
-    public ServerInput(Client c, String server, int port, BlockingQueue<Image> imageQueue) {
+    public ServerInput(ClientManager c, InputStream serverInput, BlockingQueue<Image> imageQueue) {
         this.c = c;
-        this.server = server;
-        this.port = port;
+        this.is = serverInput;
         this.imageQueue = imageQueue;
-    }
+   }
 
     public void run() {
-        while (true) {
-            try {
-                // Open a socket to the server, get the input/output streams
-                Socket sock = new Socket(server, port);
-                InputStream is = sock.getInputStream();
-                OutputStream os = sock.getOutputStream();
+        System.out.println("Server input started");
+        while (c.isConnected()) {
+            getInputBytes(cmd);
+//            System.out.println("got cmd");
 
-                // Send a simple request, always for "/image.jpg"
-                putLine(os, "GET /image.jpg HTTP/1.0");
-                putLine(os, "");        // The request ends with an empty line
-
-                // Read the first line of the response (status line)
-                String responseLine;
-                responseLine = getLine(is);
-                System.out.println("HTTP server says '" + responseLine + "'.");
-                // Ignore the following header lines up to the final empty one.
-                do {
-                    responseLine = getLine(is);
-                } while (!(responseLine.equals("")));
-
-                // Now load the JPEG image.
-                int bufferSize = jpeg.length;
-                int bytesRead = 0;
-                int bytesLeft = bufferSize;
-                int status;
-
-                // We have to keep reading until -1 (meaning "end of file") is
-                // returned. The socket (which the stream is connected to)
-                // does not wait until all data is available; instead it
-                // returns if nothing arrived for some (short) time.
-                do {
-                    status = is.read(jpeg, bytesRead, bytesLeft);
-                    // The 'status' variable now holds the no. of bytes read,
-                    // or -1 if no more data is available
-                    if (status > 0) {
-                        bytesRead += status;
-                        bytesLeft -= status;
-                    }
-                } while (status >= 0);
-                sock.close();
-
-                System.out.println("Received image data ("
-                        + bytesRead + " bytes).");
-
-            } catch (IOException e) {
-                System.out.println("Error when receiving image.");
+            if (Arrays.equals(cmd, CMD_JPEG)) {
+                jpeg = new byte[AxisM3006V.IMAGE_BUFFER_SIZE];
+                getInputBytes(jpeg);
+                imageQueue.add(new Image(jpeg));
+            } else if (Arrays.equals(cmd, CMD_MOVIE)) {
+                c.setMode(MODE.MOVIE);
+            } else {
+                System.err.println("Unrecognized command " + cmd);
             }
-
-            try {
-                sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-            imageQueue.add(new Image(jpeg));
         }
     }
     // -------------------------------------------------------- PRIVATE METHODS
+
+    // get n input bytes
+    private void getInputBytes(byte[] data) {
+        try {
+            int bufferSize = data.length;
+            int bytesRead = 0;
+            int bytesLeft = bufferSize;
+            int status;
+
+            // We have to keep reading until -1 (meaning "end of file") is
+            // returned. The socket (which the stream is connected to)
+            // does not wait until all data is available; instead it
+            // returns if nothing arrived for some (short) time.
+            do {
+                status = is.read(data, bytesRead, bytesLeft);
+                // The 'status' variable now holds the no. of bytes read,
+                // or -1 if no more data is available
+                if (status > 0) {
+                    bytesRead += status;
+                    bytesLeft -= status;
+                }
+            } while (status >= 0);
+
+            System.out.println("Received image data ("
+                    + bytesRead + " bytes).");
+
+        } catch (IOException e) {
+            System.out.println("Error when receiving image.");
+        }
+    }
 
     private final byte[] CRLF      = { 13, 10 };
 
@@ -118,5 +108,4 @@ public class ServerInput extends Thread {
         s.write(str.getBytes());
         s.write(CRLF);
     }
-
 }

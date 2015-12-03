@@ -13,4 +13,9 @@ public class Constants {
         MOVIE,
         AUTO
     };
+
+    public static final byte[] CMD_JPEG = {0x0, 0x0, 0x0, 0x1};
+    public static final byte[] CMD_IDLE = {0x0, 0x0, 0x1, 0x0};
+    public static final byte[] CMD_MOVIE = {0x0, 0x1, 0x0, 0x0};
+    public static final byte[] CMD_DISCONNECT = {0x1, 0x0, 0x0, 0x0};
 }

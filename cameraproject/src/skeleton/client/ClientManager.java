@@ -2,14 +2,17 @@ package skeleton.client;
 
 import static skeleton.client.Constants.*;
 
+import java.io.IOException;
 import java.io.OutputStream;
+import java.net.Socket;
+import java.util.Arrays;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.PriorityBlockingQueue;
 
 /**
  * Created by michael on 02/12/15.
  */
-public class Client {
+public class ClientManager {
     private String[] camera1AddressPort;
     private String[] camera2AddressPort;
     private ServerInput serverInput;
@@ -25,22 +28,27 @@ public class Client {
     private ImageOutput camera2ImageOutput;
 
 
+	public static void main(String[] args) {
+		if (args.length!=4) {
+			System.out.println("Syntax: JPEGHTTPClient <address1> <port1> <address2> <port2>");
+			System.exit(1);
+		}
+        String[] addressPort1 = Arrays.copyOfRange(args,0,2);
+        String[] addressPort2 = Arrays.copyOfRange(args, 3, 4);
+
+        new ClientManager(addressPort1, addressPort2);
+	}
+
     /**
      * Konstruktor för klient. Skapar GUI, pictureHandler.
      * Två PictureUpdateThread och två PictureQueue.
      */
-    public Client(String[] c1ap, String[] c2ap) {
+    public ClientManager(String[] c1ap, String[] c2ap) {
         this.camera1AddressPort = c1ap;
         this.camera2AddressPort = c2ap;
         this.camera1ImageQ = new PriorityBlockingQueue<Image>();
         this.camera2ImageQ = new PriorityBlockingQueue<Image>();
 
-        this.serverInput = new ServerInput(this,
-                camera1AddressPort[0],
-                Integer.parseInt(camera1AddressPort[1]),
-                camera1ImageQ
-        );
-        this.serverInput.start();
 
         this.gui = new GUI(this);
 
@@ -77,7 +85,49 @@ public class Client {
         return true;
     }
 
-//    public synchronized connect(String[] addressPort) {
-//
-//    }
+    public synchronized void setMode(MODE m) {
+        this.mode = m;
+    }
+
+    public synchronized boolean isConnected() {
+        return connected;
+    }
+
+    public synchronized void connectButton() {
+        boolean errored = false;
+
+        if (connected) {
+            System.out.println("Disconnect");
+
+        } else {
+            System.out.println("Connect");
+            try {
+                camera1Output = connect(camera1AddressPort);
+            } catch (IOException e) {
+                System.err.println("Camera 1 did not connect");
+                e.printStackTrace();
+                errored = true;
+            }
+
+            if (!errored) {
+                connected = true;
+                System.out.println("Connected");
+            }
+        }
+    }
+
+    public synchronized OutputStream connect(String[] CameraAddressPort) throws IOException {
+        String address = CameraAddressPort[0];
+        int port = Integer.parseInt(CameraAddressPort[1]);
+
+        Socket cameraSocket = new Socket(address, port);
+        this.serverInput = new ServerInput(
+                this,
+                cameraSocket.getInputStream(),
+                camera1ImageQ
+        );
+        this.serverInput.start();
+
+        return cameraSocket.getOutputStream();
+    }
 }

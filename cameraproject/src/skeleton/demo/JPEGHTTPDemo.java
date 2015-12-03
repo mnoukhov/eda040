@@ -1,7 +1,8 @@
 package skeleton.demo;
 
+import skeleton.client.ClientManager;
+import skeleton.server.CameraManager;
 import skeleton.server.JPEGHTTPServer;
-import skeleton.client.Main;
 
 public class JPEGHTTPDemo {
 
@@ -21,7 +22,7 @@ public class JPEGHTTPDemo {
 	
 	private static class Server1 extends Thread {
 		public void run() {
-			JPEGHTTPServer.main(new String[] {"6077"});
+			CameraManager.main(new String[]{"6077"});
 		}
 	}
 	
@@ -32,8 +33,7 @@ public class JPEGHTTPDemo {
 	}
 	
 	private static class Client extends Thread {
-		public void run() {
-			Main.main(new String[] {"localhost", "6077", "localhost", "6078"});
+		public void run() { ClientManager.main(new String[]{"localhost", "6077", "localhost", "6078"});
 		}
 	}
 }
