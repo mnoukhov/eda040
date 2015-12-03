@@ -13,6 +13,7 @@ import java.net.*;                  // Provides ServerSocket, Socket
 import java.io.*;                   // Provides InputStream, OutputStream
 
 import se.lth.cs.eda040.fakecamera.*;      // Provides AxisM3006V
+import static skeleton.client.Constants.*;
 
 /**
  * Itsy bitsy teeny weeny web server. Always returns an image, regardless
@@ -60,78 +61,55 @@ public class JPEGHTTPServer {
 	 * Two simple help methods (getLine/putLine) are used to read/write
 	 * entire text lines from/to streams. Their implementations follow below.
 	 */
-	public void handleRequests() throws IOException {
+	public synchronized void handleRequests() throws IOException {
 		byte[] jpeg = new byte[AxisM3006V.IMAGE_BUFFER_SIZE];
 		ServerSocket serverSocket = new ServerSocket(myPort);
-		System.out.println("HTTP server operating at port " + myPort + ".");
+        System.out.println("HTTP server operating at port " + myPort + ".");
+        Socket clientSocket = serverSocket.accept();
+        OutputStream os = clientSocket.getOutputStream();
 
 		while (true) {
+            try {
+                wait(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 			try {
 				// The 'accept' method waits for a client to connect, then
 				// returns a socket connected to that client.
-				Socket clientSocket = serverSocket.accept();
 
 				// The socket is bi-directional. It has an input stream to read
 				// from and an output stream to write to. The InputStream can
 				// be read from using read(...) and the OutputStream can be
 				// written to using write(...). However, we use our own
 				// getLine/putLine methods below.
-				InputStream  is = clientSocket.getInputStream();
-				OutputStream os = clientSocket.getOutputStream();
 
-				// Read the request
-				String request = getLine(is);
+                // Got a GET request. Respond with a JPEG image from the
+                // camera. Tell the client not to cache the image
+                putLine(os, "HTTP/1.0 200 OK");
+                putLine(os, "Content-Type: image/jpeg");
+                putLine(os, "Pragma: no-cache");
+                putLine(os, "Cache-Control: no-cache");
+                putLine(os, "");                   // Means 'end of header'
 
-				// The request is followed by some additional header lines,
-				// followed by a blank line. Those header lines are ignored.
-				String header;
-				boolean cont; 
-				do {
-					header = getLine(is);
-					cont = !(header.equals(""));
-				} while (cont);
-
-				System.out.println("HTTP request '" + request
-						+ "' received.");
-
-				// Interpret the request. Complain about everything but GET.
-				// Ignore the file name.
-				if (request.substring(0,4).equals("GET ")) {
-					// Got a GET request. Respond with a JPEG image from the
-					// camera. Tell the client not to cache the image
-					putLine(os, "HTTP/1.0 200 OK");
-					putLine(os, "Content-Type: image/jpeg");
-					putLine(os, "Pragma: no-cache");
-					putLine(os, "Cache-Control: no-cache");
-					putLine(os, "");                   // Means 'end of header'
-
-					if (!myCamera.connect()) {
-						System.out.println("Failed to connect to camera!");
-						System.exit(1);
-					}
-					int len = myCamera.getJPEG(jpeg, 0);
-					
-					os.write(jpeg, 0, len);
-					myCamera.close();
-				}
-				else {
-					// Got some other request. Respond with an error message.
-					putLine(os, "HTTP/1.0 501 Method not implemented");
-					putLine(os, "Content-Type: text/plain");
-					putLine(os, "");
-					putLine(os, "No can do. Request '" + request
-							+ "' not understood.");
-
-					System.out.println("Unsupported HTTP request!");
-				}
-
-				os.flush();                      // Flush any remaining content
-				clientSocket.close();	          // Disconnect from the client
+                if (!myCamera.connect()) {
+                    System.out.println("Failed to connect to camera!");
+                    System.exit(1);
+                }
+                int len = myCamera.getJPEG(jpeg, 0);
+                putLine(os, CMD_JPEG);
+                putLine(os, Integer.toString(len));
+                os.write(jpeg, 0, len);
+                System.out.println("Image sent: length " + len);
 			}
 			catch (IOException e) {
 				System.out.println("Caught exception " + e);
+                break;
 			}
 		}
+        myCamera.close();
+        clientSocket.close();	          // Disconnect from the client
+        os.flush();                      // Flush any remaining content
 	}
 	
 	public void destroy() {
@@ -174,6 +152,39 @@ public class JPEGHTTPServer {
 		s.write(str.getBytes());
 		s.write(CRLF);
 	}
+
+    // get n input bytes
+    private static byte[] getInputBytes(InputStream is, int n) {
+        byte[] data = new byte[n];
+        try {
+            int bytesRead = 0;
+            int bytesLeft = n;
+            int status;
+
+            // We have to keep reading until -1 (meaning "end of file") is
+            // returned. The socket (which the stream is connected to)
+            // does not wait until all data is available; instead it
+            // returns if nothing arrived for some (short) time.
+            do {
+                status = is.read(data, bytesRead, bytesLeft);
+                // The 'status' variable now holds the no. of bytes read,
+                // or -1 if no more data is available
+                System.out.println("read: " + bytesRead);
+                if (status > 0) {
+                    bytesRead += status;
+                    bytesLeft -= status;
+                }
+            } while (bytesLeft > 0);
+
+//            System.out.println("Received image data ("
+//                    + bytesRead + " bytes).");
+
+        } catch (IOException e) {
+            System.out.println("Error when receiving bytes.");
+        }
+
+        return data;
+    }
 
 	// ----------------------------------------------------- PRIVATE ATTRIBUTES
 

@@ -58,11 +58,11 @@ public class CameraManager extends RTThread {
                     getInputBytes(cmd);
                     System.out.println("server got cmd");
 
-                    if (Arrays.equals(cmd, CMD_IDLE)) {
+                    if (cmd.equals(CMD_IDLE)) {
                         cameraMonitor.setMode(MODE.IDLE);
-                    } else if (Arrays.equals(cmd, CMD_MOVIE)) {
+                    } else if (cmd.equals(CMD_MOVIE)) {
                         cameraMonitor.setMode(MODE.MOVIE);
-                    } else if (Arrays.equals(cmd, CMD_DISCONNECT)) {
+                    } else if (cmd.equals(CMD_DISCONNECT)) {
                         connected = false;
                         cameraThread.stop();
                     } else {

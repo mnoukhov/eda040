@@ -18,12 +18,16 @@ public class CameraMonitor {
         this.os = os;
     }
 
-    public synchronized void sendImageToClient(byte[] jpeg) {
+    public synchronized void sendImageToClient(byte[] msg, int len) {
         try {
-            os.write(CMD_JPEG);
-            os.write(CRLF);
-            os.write(jpeg);
-            os.write(CRLF);
+            putLine(os, "HTTP/1.0 200 OK");
+            putLine(os, "Content-Type: image/jpeg");
+            putLine(os, "Pragma: no-cache");
+            putLine(os, "Cache-Control: no-cache");
+            putLine(os, "");                   // Means 'end of header'
+            putLine(os, CMD_JPEG);
+            putLine(os, Integer.toString(len));
+            os.write(msg, 0, len);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -33,5 +37,19 @@ public class CameraMonitor {
         this.mode = m;
     }
 
+    public synchronized void flushOS() {
+        try {
+            this.os.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private final byte[] CRLF      = { 13, 10 };
+
+    private void putLine(OutputStream s, String str)
+            throws IOException {
+        s.write(str.getBytes());
+        s.write(CRLF);
+    }
 }

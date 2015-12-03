@@ -126,8 +126,16 @@ public class ClientManager {
                 cameraSocket.getInputStream(),
                 camera1ImageQ
         );
+        System.out.println("Server input started");
+//        this.serverInput = new ServerInput(
+//                this,
+//                gui.getImagePanel(),
+//                address,
+//                port
+//        );
         this.serverInput.start();
 
-        return cameraSocket.getOutputStream();
+//        return cameraSocket.getOutputStream();
+        return null;
     }
 }

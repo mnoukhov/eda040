@@ -22,7 +22,7 @@ public class JPEGHTTPDemo {
 	
 	private static class Server1 extends Thread {
 		public void run() {
-			CameraManager.main(new String[]{"6077"});
+			JPEGHTTPServer.main(new String[]{"6077"});
 		}
 	}
 	

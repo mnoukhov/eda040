@@ -14,8 +14,8 @@ public class Constants {
         AUTO
     };
 
-    public static final byte[] CMD_JPEG = {0x0, 0x0, 0x0, 0x1};
-    public static final byte[] CMD_IDLE = {0x0, 0x0, 0x1, 0x0};
-    public static final byte[] CMD_MOVIE = {0x0, 0x1, 0x0, 0x0};
-    public static final byte[] CMD_DISCONNECT = {0x1, 0x0, 0x0, 0x0};
+    public static final String CMD_JPEG = "jpeg";
+    public static final String CMD_IDLE = "idle";
+    public static final String CMD_MOVIE = "movie";
+    public static final String CMD_DISCONNECT = "disconnect";
 }
