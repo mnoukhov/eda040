@@ -30,7 +30,7 @@ public class ServerInput extends Thread {
         System.out.println("Server input started");
         while (c.isConnected()) {
             getInputBytes(cmd);
-//            System.out.println("got cmd");
+            System.out.println("got cmd");
 
             if (Arrays.equals(cmd, CMD_JPEG)) {
                 jpeg = new byte[AxisM3006V.IMAGE_BUFFER_SIZE];
@@ -59,6 +59,7 @@ public class ServerInput extends Thread {
             // returns if nothing arrived for some (short) time.
             do {
                 status = is.read(data, bytesRead, bytesLeft);
+                System.out.println("status " + status);
                 // The 'status' variable now holds the no. of bytes read,
                 // or -1 if no more data is available
                 if (status > 0) {

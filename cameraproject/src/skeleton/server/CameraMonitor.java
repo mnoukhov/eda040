@@ -21,7 +21,9 @@ public class CameraMonitor {
     public synchronized void sendImageToClient(byte[] jpeg) {
         try {
             os.write(CMD_JPEG);
+            os.write(CRLF);
             os.write(jpeg);
+            os.write(CRLF);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -30,4 +32,6 @@ public class CameraMonitor {
     public synchronized void setMode(MODE m) {
         this.mode = m;
     }
+
+    private final byte[] CRLF      = { 13, 10 };
 }
