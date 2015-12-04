@@ -12,6 +12,7 @@ class GUI extends JFrame {
 
     ClientMonitor c;
     JPanel buttonPanel;
+    JLabel sourceLabel, displayModeLabel;
     ImagePanel imagePanel1, imagePanel2;
     JButton syncB, connectB, movieB, idleB, autoB;
 
