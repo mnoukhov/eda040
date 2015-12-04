@@ -20,11 +20,11 @@ class GUI extends JFrame {
            labelPanel;
     ImagePanel imagePanel1, imagePanel2;
     JLabel synchModeL, displayModeL;
-    JButton synchB,
-            asynchB,
+    JButton syncB,
             connectB,
             movieB,
-            idleB;
+            idleB,
+            autoB;
 
     public GUI(ClientMonitor c) {
         super();
@@ -67,22 +67,22 @@ class GUI extends JFrame {
         imagePanel2 = new ImagePanel();
         imagePanelContainer.add(imagePanel1);
         imagePanelContainer.add(imagePanel2);
-        this.getContentPane().add( imagePanelContainer );
+        this.getContentPane().add(imagePanelContainer);
     }
 
     public void setUpButtons() {
-        synchB = new JButton("Synchronous");
-        asynchB = new JButton("Asynchronous");
+        syncB = new JButton("Synchronous");
         connectB = new JButton("Connect");
         movieB = new JButton("Movie");
         idleB = new JButton("Idle");
+        autoB = new JButton("autoB");
 
         buttonPanel = new JPanel();
-        buttonPanel.add(synchB);
-        buttonPanel.add(asynchB);
+        buttonPanel.add(syncB);
         buttonPanel.add(connectB);
         buttonPanel.add(movieB);
         buttonPanel.add(idleB);
+        buttonPanel.add(autoB);
         this.getContentPane().add( buttonPanel );
     }
 
@@ -126,7 +126,7 @@ class GUI extends JFrame {
 //            }
 //        });
 
-        synchB.addActionListener(new ActionListener() {
+        syncB.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 c.syncButton();
