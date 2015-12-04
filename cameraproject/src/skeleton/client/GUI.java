@@ -2,6 +2,8 @@ package skeleton.client;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 class GUI extends JFrame {
 
@@ -66,7 +68,12 @@ class GUI extends JFrame {
     }
 
     public void linkButtonListeners() {
-        connectB.addActionListener(new ConnectButton(c));
+        connectB.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                c.connectButton();
+            }
+        });
     }
 }
 
