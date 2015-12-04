@@ -55,18 +55,30 @@ public class CameraManager extends RTThread {
                     cameraThread.start();
 
                     while (connected) {
+                        String responseLine;
+                        responseLine = getLine(is);
+                        System.out.println("Client sends '" + responseLine + "'.");
+                        // Ignore the following header lines up to the final empty one.
+                        do {
+                            responseLine = getLine(is);
+                        } while (!(responseLine.equals("")));
+
                         cmd = getLine(is);
-                        System.out.println("server got cmd");
 
                         if (cmd.equals(CMD_IDLE)) {
+                            System.out.println("Camera on " + port +" CMD IDLE");
+                            cameraMonitor.setMode(MODE.IDLE);
                             cameraThread.setPeriod(5000);
                         } else if (cmd.equals(CMD_MOVIE)) {
+                            cameraMonitor.setMode(MODE.MOVIE);
+                            System.out.println("Camera on " + port +" CMD MOVIE");
                             cameraThread.setPeriod(83);
                         } else if (cmd.equals(CMD_DISCONNECT)) {
+                            System.out.println("Camera on " + port +" CMD DISCONNECT");
                             connected = false;
                             cameraThread.stop();
                         } else {
-                            System.err.println("Unrecognized command " + cmd);
+                            System.err.println("Camera on " + port + "unrecognized command " + cmd);
                         }
                     }
                     cameraMonitor.flushOS();

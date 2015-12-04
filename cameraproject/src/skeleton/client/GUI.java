@@ -1,6 +1,10 @@
 package skeleton.client;
 
+import se.lth.cs.realtime.PeriodicThread;
+
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 class GUI extends JFrame {
 
@@ -18,7 +22,9 @@ class GUI extends JFrame {
     JLabel synchModeL, displayModeL;
     JButton syncB,
             connectB,
-            movieModeB;
+            movieB,
+            idleB,
+            autoB;
 
     public GUI(ClientMonitor c) {
         super();
@@ -67,12 +73,16 @@ class GUI extends JFrame {
     public void setUpButtons() {
         syncB = new JButton("Synchronous");
         connectB = new JButton("Connect");
-        movieModeB = new JButton("Movie");
+        movieB = new JButton("Movie");
+        idleB = new JButton("Idle");
+        autoB = new JButton("autoB");
 
         buttonPanel = new JPanel();
         buttonPanel.add(syncB);
         buttonPanel.add(connectB);
-        buttonPanel.add(movieModeB);
+        buttonPanel.add(movieB);
+        buttonPanel.add(idleB);
+        buttonPanel.add(autoB);
         this.getContentPane().add( buttonPanel );
     }
 
@@ -81,7 +91,48 @@ class GUI extends JFrame {
     }
 
     public void linkButtonListeners() {
-        connectB.addActionListener(new ConnectButton(c));
+        connectB.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                boolean success = c.connectButton();
+                if (success) {
+                    if (c.isConnected()) {
+                        connectB.setText("Disconnect");
+                    } else {
+                        connectB.setText("Connect");
+                    }
+                }
+            }
+        });
+
+        idleB.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                c.idleButton();
+            }
+        });
+
+        movieB.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                c.movieButton();
+            }
+        });
+
+//        autoB.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                c.autoButton();
+//            }
+//        });
+
+        syncB.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                c.syncButton();
+            }
+        });
+
     }
 }
 

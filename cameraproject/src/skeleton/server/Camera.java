@@ -18,12 +18,13 @@ public class Camera extends PeriodicThread {
     }
 
     public void perform() {
-        //TODO: add timestamp
-        byte[] bytes = new byte[AxisM3006V.IMAGE_BUFFER_SIZE];
-        int length = camera.getJPEG(bytes, 0);
-        cameraMonitor.sendImageToClient(bytes, length);
+        byte[] bytes = new byte[AxisM3006V.IMAGE_BUFFER_SIZE + 8];
+        camera.getTime(bytes, 0);
+        int length = camera.getJPEG(bytes, 8);
+        cameraMonitor.sendImageToClient(bytes, length+8);
 
         if (getPeriod() == IDLE_PERIOD && camera.motionDetected()) {
+            cameraMonitor.setMode(MODE.MOVIE);
             setPeriod(MOVIE_PERIOD);
             cameraMonitor.sendMovieChangeToClient();
         }

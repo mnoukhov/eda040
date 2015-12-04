@@ -97,6 +97,7 @@ public class ClientMonitor {
             }
         } catch (IOException e) {
             e.printStackTrace();
+
         }
     }
 
@@ -117,12 +118,12 @@ public class ClientMonitor {
         return connected;
     }
 
-    public synchronized void connectButton() {
-        boolean errored = false;
+    public synchronized boolean connectButton() {
+        boolean success = true;
 
         if (connected) {
             System.out.println("Disconnect");
-
+            disconnect();
         } else {
             System.out.println("Connect");
             try {
@@ -130,17 +131,45 @@ public class ClientMonitor {
             } catch (IOException e) {
                 System.err.println("Camera 1 did not connect");
                 e.printStackTrace();
-                errored = true;
+                success = false;
             }
 
-            if (!errored) {
+//            try {
+//                camera2Output = connect(camera2AddressPort);
+//            } catch (IOException e) {
+//                System.err.println("Camera 2 did not connect");
+//                e.printStackTrace();
+//                success = false;
+//            }
+
+            if (success) {
                 connected = true;
                 System.out.println("Connected");
             }
         }
+        return success;
     }
 
-    public synchronized OutputStream connect(String[] CameraAddressPort) throws IOException {
+    public synchronized void idleButton() {
+        setMode(MODE.IDLE, 0);
+    }
+
+    public synchronized void movieButton() {
+        setMode(MODE.MOVIE, 0);
+    }
+
+    public synchronized void autoButton() {
+        setMode(MODE.AUTO, 0);
+    }
+
+    public synchronized boolean syncButton() {
+        sync = !sync;   //toggle sync
+        return true;
+    }
+
+    // PRIVATE METHODS
+
+    private synchronized OutputStream connect(String[] CameraAddressPort) throws IOException {
         String address = CameraAddressPort[0];
         int port = Integer.parseInt(CameraAddressPort[1]);
 
@@ -155,6 +184,22 @@ public class ClientMonitor {
         this.serverInput.start();
 
         return cameraSocket.getOutputStream();
+    }
+
+    private synchronized void disconnect() {
+        try {
+            putLine(camera1Output, CMD_DISCONNECT);
+            putLine(camera2Output, CMD_DISCONNECT);
+        } catch (IOException e) {
+            System.out.println("disconnect failed");
+        }
+
+        camera1ImageQ.clear();
+        camera2ImageQ.clear();
+
+        connected = false;
+        mode = MODE.AUTO;
+        sync = false;
     }
 
     // STATIC METHODS + VARS

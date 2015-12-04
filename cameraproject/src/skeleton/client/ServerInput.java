@@ -31,14 +31,15 @@ public class ServerInput extends Thread {
     }
 
     public void run() {
-        byte [] jpeg = new byte[AxisM3006V.IMAGE_BUFFER_SIZE];
+        byte[] jpeg = new byte[AxisM3006V.IMAGE_BUFFER_SIZE];
+        byte[] timestamp = new byte[8];
 
         while (c.isConnected()) {
             try {
                 // Read the first line of the response (status line)
                 String responseLine;
                 responseLine = getLine(is);
-                System.out.println("HTTP sends '" + responseLine + "'.");
+                System.out.println("HTTP Server sends '" + responseLine + "'.");
                 // Ignore the following header lines up to the final empty one.
                 do {
                     responseLine = getLine(is);
@@ -51,9 +52,10 @@ public class ServerInput extends Thread {
                     System.out.println("CMD: jpeg");
                     int len = Integer.parseInt(getLine(is));
                     System.out.println("Reading image size " + len);
-                    getInputBytes(is, jpeg, len);
+                    getInputBytes(is, timestamp, 8);
+                    getInputBytes(is, jpeg, len - 8);
 //                    viewer.refreshImage(jpeg);
-                    imageQueue.add(new Image(jpeg));
+                    imageQueue.add(new Image(jpeg, timestamp));
                 } else if (cmd.equals(CMD_MOVIE)) {
                     System.out.println("CMD: movie");
                     c.setMode(MODE.MOVIE, cameraNum);
