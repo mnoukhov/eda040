@@ -35,6 +35,7 @@ public class ImageOutput extends Thread {
                     failures = 0;
                 }
 
+                imagePanel.setDelayLabel(next.delay);
                 imagePanel.refresh(next.getJpeg());
 
             } catch (InterruptedException e) {

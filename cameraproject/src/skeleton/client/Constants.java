@@ -16,6 +16,7 @@ public class Constants {
 
     public static final String CMD_JPEG = "jpeg";
     public static final String CMD_IDLE = "idle";
+    public static final String CMD_AUTO = "auto";
     public static final String CMD_MOVIE = "movie";
     public static final String CMD_DISCONNECT = "disconnect";
 

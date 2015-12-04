@@ -31,10 +31,10 @@ public class CameraManager extends RTThread {
     public CameraManager(int serverPort) {
         super();
         port = serverPort;
-        cameraMonitor = new CameraMonitor();
         camera = new AxisM3006V();
         camera.init();
         camera.setProxy("argus-1.student.lth.se", port);
+        cameraMonitor = new CameraMonitor();
     }
 
     public void run() {
@@ -53,6 +53,7 @@ public class CameraManager extends RTThread {
                     connected = true;
                     System.out.println("Server connected to client");
                     cameraThread = new Camera(cameraMonitor, camera);
+                    cameraMonitor.setCameraThread(cameraThread);
                     cameraThread.start();
 
                     while (connected) {
@@ -69,11 +70,12 @@ public class CameraManager extends RTThread {
                         if (cmd.equals(CMD_IDLE)) {
                             System.out.println("Camera on " + port +" CMD IDLE");
                             cameraMonitor.setMode(MODE.IDLE);
-                            cameraThread.setPeriod(5000);
                         } else if (cmd.equals(CMD_MOVIE)) {
                             cameraMonitor.setMode(MODE.MOVIE);
                             System.out.println("Camera on " + port +" CMD MOVIE");
-                            cameraThread.setPeriod(83);
+                        } else if (cmd.equals(CMD_AUTO)) {
+                            cameraMonitor.setMode(MODE.AUTO);
+                            System.out.println("Camera on " + port +" CMD AUTO");
                         } else if (cmd.equals(CMD_DISCONNECT)) {
                             System.out.println("Camera on " + port +" CMD DISCONNECT");
                             connected = false;

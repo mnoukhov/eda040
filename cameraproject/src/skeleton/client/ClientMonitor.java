@@ -68,15 +68,15 @@ public class ClientMonitor {
     // maybe sync the image and then return true if everything worked, false if tried to sync but could not
     public synchronized boolean maybeSyncUntil(long displayTime) {
         if (sync) {
-            long waitTime;
-            do {
-                waitTime = displayTime - System.currentTimeMillis();
+            long waitTime = displayTime - System.currentTimeMillis();
+            while (waitTime > 0) {
                 try {
                     wait(waitTime);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-            } while (waitTime > 0);
+                waitTime = displayTime - System.currentTimeMillis();
+            }
 
             if (waitTime < SYNC_WAITING_WINDOW) {
                 return false; // we waited too long!
@@ -116,7 +116,7 @@ public class ClientMonitor {
         } else if (mode == MODE.IDLE) {
             putLine(os, CMD_IDLE);
         } else if (mode == MODE.AUTO) {
-            putLine(os, CMD_IDLE);
+            putLine(os, CMD_AUTO);
         }
     }
 

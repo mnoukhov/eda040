@@ -10,12 +10,17 @@ import java.io.OutputStream;
  */
 public class CameraMonitor {
     private OutputStream os;
-    private MODE mode = MODE.IDLE;
+    private MODE mode = MODE.AUTO;
+    private Camera cameraThread;
 
     public CameraMonitor() {}
 
     public synchronized void setOutputStream(OutputStream os) {
         this.os = os;
+    }
+
+    public synchronized void setCameraThread (Camera cameraThread) {
+        this.cameraThread = cameraThread;
     }
 
     public synchronized void sendImageToClient(byte[] msg, int len) {
@@ -54,6 +59,15 @@ public class CameraMonitor {
 
     public synchronized void setMode(MODE mode) {
         this.mode = mode;
+        if (mode == MODE.IDLE || mode == MODE.AUTO) {
+            cameraThread.setPeriod(IDLE_PERIOD);
+        } else if (mode == MODE.MOVIE) {
+            cameraThread.setPeriod(MOVIE_PERIOD);
+        }
+    }
+
+    public synchronized MODE getMode() {
+        return mode;
     }
 
     private static final byte[] CRLF      = { 13, 10 };
