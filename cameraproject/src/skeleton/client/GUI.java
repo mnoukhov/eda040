@@ -96,6 +96,35 @@ class GUI extends JFrame {
                 c.connectButton();
             }
         });
+
+        idleB.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                c.idleButton();
+            }
+        });
+
+        movieB.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                c.movieButton();
+            }
+        });
+
+//        autoB.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                c.autoButton();
+//            }
+//        });
+
+        synchB.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                c.syncButton();
+            }
+        });
+
     }
 }
 

@@ -39,7 +39,7 @@ public class ServerInput extends Thread {
                 // Read the first line of the response (status line)
                 String responseLine;
                 responseLine = getLine(is);
-                System.out.println("HTTP sends '" + responseLine + "'.");
+                System.out.println("HTTP Server sends '" + responseLine + "'.");
                 // Ignore the following header lines up to the final empty one.
                 do {
                     responseLine = getLine(is);

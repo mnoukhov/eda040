@@ -10,6 +10,7 @@ import java.io.OutputStream;
  */
 public class CameraMonitor {
     private OutputStream os;
+    private MODE mode = MODE.IDLE;
 
     public CameraMonitor() {}
 
@@ -49,6 +50,10 @@ public class CameraMonitor {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public synchronized void setMode(MODE mode) {
+        this.mode = mode;
     }
 
     private static final byte[] CRLF      = { 13, 10 };

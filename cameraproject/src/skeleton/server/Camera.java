@@ -24,6 +24,7 @@ public class Camera extends PeriodicThread {
         cameraMonitor.sendImageToClient(bytes, length+8);
 
         if (getPeriod() == IDLE_PERIOD && camera.motionDetected()) {
+            cameraMonitor.setMode(MODE.MOVIE);
             setPeriod(MOVIE_PERIOD);
             cameraMonitor.sendMovieChangeToClient();
         }
