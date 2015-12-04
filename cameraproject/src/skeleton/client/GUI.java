@@ -6,7 +6,8 @@ import java.awt.*;
 class GUI extends JFrame {
 
     ClientMonitor c;
-    ImagePanel imagePanel;
+    JPanel imagePanelContainer;
+    ImagePanel imagePanel1, imagePanel2;
     JLabel synchModeL, displayModeL;
     JButton synchB,
             asynchB,
@@ -19,12 +20,15 @@ class GUI extends JFrame {
     public GUI(ClientMonitor c) {
         super();
         this.c = c;
-
-        imagePanel = new ImagePanel();
+        imagePanelContainer = new JPanel();
+        imagePanel1 = new ImagePanel();
+        imagePanel2 = new ImagePanel();
+        imagePanelContainer.add(imagePanel1);
+        imagePanelContainer.add(imagePanel2);
         this.getContentPane().setLayout(new BorderLayout());
         handleButtons();
         linkButtonListeners();
-        this.getContentPane().add(imagePanel, BorderLayout.NORTH);
+        this.getContentPane().add(imagePanelContainer, BorderLayout.NORTH);
         this.setLocationRelativeTo(null);
         this.pack();
 //        this.setSize(640, 480);
@@ -32,8 +36,8 @@ class GUI extends JFrame {
         this.setVisible(true);
     }
 
-    public void refreshImage(byte[] jpeg) {
-        imagePanel.refresh(jpeg);
+    public void refreshImage(byte[] jpeg, int panelNum) {
+        getImagePanel(panelNum).refresh(jpeg);
         if (firstCall) {
             this.pack();
             this.setVisible(true);
@@ -42,7 +46,15 @@ class GUI extends JFrame {
     }
 
     public ImagePanel getImagePanel() {
-        return imagePanel;
+        return imagePanel1;
+    }
+
+    public ImagePanel getImagePanel(int panelNum) {
+        switch (panelNum) {
+            case 1: return imagePanel1;
+            case 2: return imagePanel2;
+            default: return null;
+        }
     }
 
     public void handleLabels() {
