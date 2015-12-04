@@ -1,7 +1,6 @@
 package skeleton.client;
 
 import javax.swing.*;
-import java.awt.*;
 
 class GUI extends JFrame {
 
@@ -17,11 +16,9 @@ class GUI extends JFrame {
            labelPanel;
     ImagePanel imagePanel1, imagePanel2;
     JLabel synchModeL, displayModeL;
-    JButton synchB,
-            asynchB,
+    JButton syncB,
             connectB,
-            movieB,
-            idleB;
+            movieModeB;
 
     public GUI(ClientMonitor c) {
         super();
@@ -64,22 +61,18 @@ class GUI extends JFrame {
         imagePanel2 = new ImagePanel();
         imagePanelContainer.add(imagePanel1);
         imagePanelContainer.add(imagePanel2);
-        this.getContentPane().add( imagePanelContainer );
+        this.getContentPane().add(imagePanelContainer);
     }
 
     public void setUpButtons() {
-        synchB = new JButton("Synchronous");
-        asynchB = new JButton("Asynchronous");
+        syncB = new JButton("Synchronous");
         connectB = new JButton("Connect");
-        movieB = new JButton("Movie");
-        idleB = new JButton("Idle");
+        movieModeB = new JButton("Movie");
 
         buttonPanel = new JPanel();
-        buttonPanel.add(synchB);
-        buttonPanel.add(asynchB);
+        buttonPanel.add(syncB);
         buttonPanel.add(connectB);
-        buttonPanel.add(movieB);
-        buttonPanel.add(idleB);
+        buttonPanel.add(movieModeB);
         this.getContentPane().add( buttonPanel );
     }
 
