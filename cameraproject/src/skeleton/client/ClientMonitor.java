@@ -175,6 +175,22 @@ public class ClientMonitor {
         return true;
     }
 
+    public synchronized void windowClosing() {
+        try {
+            shutdown(camera1Output);
+            shutdown(camera2Output);
+        } catch (IOException e) {
+            System.out.println("Shutdown failed");
+        }
+    }
+
+    private synchronized void shutdown(OutputStream os) throws IOException {
+        putLine(os, "POST mode-change HTTP/1.0");
+        putLine(os, "Content-Type: text");
+        putLine(os, "");                   // Means 'end of header'
+        putLine(os, CMD_SHUTDOWN);
+    }
+
     // PRIVATE METHODS
 
     private synchronized OutputStream connect(String[] CameraAddressPort, BlockingQueue<Image> imageQueue, int cameraNum) throws IOException {

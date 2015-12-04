@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Arrays;
 
 /**
  * Created by michael on 03/12/15.
@@ -80,6 +79,12 @@ public class CameraManager extends RTThread {
                             System.out.println("Camera on " + port +" CMD DISCONNECT");
                             connected = false;
                             cameraThread.stop();
+                        } else if (cmd.equals(CMD_SHUTDOWN)) {
+                            System.out.println("Camera on " + port +" CMD SHUTDOWN");
+                            connected = false;
+                            cameraThread.stop();
+                            camera.destroy();
+                            System.exit(0);
                         } else {
                             System.err.println("Camera on " + port + "unrecognized command " + cmd);
                         }
