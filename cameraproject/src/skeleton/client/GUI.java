@@ -7,6 +7,7 @@ class GUI extends JFrame {
 
     ClientManager c;
     ImagePanel imagePanel;
+    JLabel synchModeL, displayModeL;
     JButton synchB,
             asynchB,
             connectB,
@@ -21,8 +22,7 @@ class GUI extends JFrame {
 
         imagePanel = new ImagePanel();
         this.getContentPane().setLayout(new BorderLayout());
-        initButtons();
-        addButtonsToGUI();
+        handleButtons();
         linkButtonListeners();
         this.getContentPane().add(imagePanel, BorderLayout.NORTH);
         this.setLocationRelativeTo(null);
@@ -43,17 +43,19 @@ class GUI extends JFrame {
 
     public ImagePanel getImagePanel() {
         return imagePanel;
-    }
 
-    public void initButtons() {
+    public void handleLabels() {
+
+    }
+}
+
+    public void handleButtons() {
         synchB = new JButton("Synchronous");
         asynchB = new JButton("Asynchronous");
         connectB = new JButton("Connect");
         movieB = new JButton("Movie");
         idleB = new JButton("Idle");
-    }
 
-    public void addButtonsToGUI() {
         buttonPanel = new JPanel();
         buttonPanel.add(synchB);
         buttonPanel.add(asynchB);
