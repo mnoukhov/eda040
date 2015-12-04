@@ -57,6 +57,7 @@ public class ClientMonitor {
 
     public synchronized void setSync(boolean sync) {
         this.sync = sync;
+        gui.setSyncModeLabel(sync);
     }
 
     // maybe sync the image and then return true if everything worked, false if tried to sync but could not
@@ -102,7 +103,7 @@ public class ClientMonitor {
     }
 
     public synchronized void sendModeChangeToServer(OutputStream os, MODE mode) throws IOException {
-        putLine(os, "POST HTTP/1.0");
+        putLine(os, "POST mode-change HTTP/1.0");
         putLine(os, "Content-Type: text");
         putLine(os, "");                   // Means 'end of header'
         if (mode == MODE.MOVIE) {
@@ -144,7 +145,7 @@ public class ClientMonitor {
 
             if (success) {
                 connected = true;
-                System.out.println("Connected");
+                System.out.println("Client connected to server");
             }
         }
         return success;
@@ -163,7 +164,7 @@ public class ClientMonitor {
     }
 
     public synchronized boolean syncButton() {
-        sync = !sync;   //toggle sync
+        setSync(!sync);
         return true;
     }
 
@@ -189,9 +190,10 @@ public class ClientMonitor {
     private synchronized void disconnect() {
         try {
             putLine(camera1Output, CMD_DISCONNECT);
-            putLine(camera2Output, CMD_DISCONNECT);
+//            putLine(camera2Output, CMD_DISCONNECT);
         } catch (IOException e) {
             System.out.println("disconnect failed");
+            return;
         }
 
         camera1ImageQ.clear();

@@ -72,8 +72,12 @@ class GUI extends JFrame {
         this.getContentPane().add( buttonPanel, BorderLayout.SOUTH );
     }
 
-    public void setSynchModeLabel(int synchMode) {
-        return;
+    public void setSyncModeLabel(boolean sync) {
+        if (sync) {
+            syncB.setText("Unsynchronize");
+        } else {
+            syncB.setText("Synchronize");
+        }
     }
 
     public void linkButtonListeners() {
@@ -105,12 +109,12 @@ class GUI extends JFrame {
             }
         });
 
-//        autoB.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                c.autoButton();
-//            }
-//        });
+        autoB.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                c.autoButton();
+            }
+        });
 
         syncB.addActionListener(new ActionListener() {
             @Override

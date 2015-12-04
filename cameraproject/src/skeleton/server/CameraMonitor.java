@@ -35,7 +35,7 @@ public class CameraMonitor {
 
     public synchronized void sendMovieChangeToClient() {
         try {
-            putLine(os, "POST HTTP/1.0");
+            putLine(os, "POST mode-change HTTP/1.0");
             putLine(os, "Content-Type: text");
             putLine(os, "");                   // Means 'end of header'
             putLine(os, CMD_MOVIE);

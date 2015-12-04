@@ -46,6 +46,7 @@ public class CameraManager extends RTThread {
 
             while (true) {
                 try {
+                    System.out.println("Server waiting for client");
                     Socket clientSocket = serverSocket.accept();
                     is = clientSocket.getInputStream();
                     cameraMonitor.setOutputStream(clientSocket.getOutputStream());
@@ -81,6 +82,7 @@ public class CameraManager extends RTThread {
                             System.err.println("Camera on " + port + "unrecognized command " + cmd);
                         }
                     }
+                    System.out.println("disconnecting server");
                     cameraMonitor.flushOS();
                     clientSocket.close();
                 } catch (IOException e) {
