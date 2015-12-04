@@ -212,8 +212,8 @@ public class ClientMonitor {
 
     private synchronized void disconnect() {
         try {
-            putLine(camera1Output, CMD_DISCONNECT);
-            putLine(camera2Output, CMD_DISCONNECT);
+            sendDisconnect(camera1Output);
+            sendDisconnect(camera2Output);
         } catch (IOException e) {
             System.out.println("disconnect failed");
             return;
@@ -223,8 +223,15 @@ public class ClientMonitor {
         camera2ImageQ.clear();
 
         connected = false;
-        mode = MODE.AUTO;
-        sync = false;
+        setMode(MODE.AUTO, 0);
+        setSync(false);
+    }
+
+    private synchronized void sendDisconnect(OutputStream os) throws IOException {
+        putLine(os, "POST mode-change HTTP/1.0");
+        putLine(os, "Content-Type: text");
+        putLine(os, "");                   // Means 'end of header'
+        putLine(os, CMD_DISCONNECT);
     }
 
     // STATIC METHODS + VARS

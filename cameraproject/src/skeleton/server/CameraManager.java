@@ -20,7 +20,6 @@ public class CameraManager extends RTThread {
     private Camera cameraThread;
 
     private InputStream is;
-    private boolean connected;
 
     public static void main (String[] args) {
         CameraManager cm = new CameraManager(Integer.parseInt(args[0]));
@@ -49,13 +48,13 @@ public class CameraManager extends RTThread {
                     Socket clientSocket = serverSocket.accept();
                     is = clientSocket.getInputStream();
                     cameraMonitor.setOutputStream(clientSocket.getOutputStream());
-                    connected = true;
+                    cameraMonitor.setConnected(true);
                     System.out.println("Server connected to client");
                     cameraThread = new Camera(cameraMonitor, camera);
                     cameraMonitor.setCameraThread(cameraThread);
                     cameraThread.start();
 
-                    while (connected) {
+                    while (cameraMonitor.isConnected()) {
                         String responseLine;
                         responseLine = getLine(is);
                         System.out.println("Client sends '" + responseLine + "'.");
@@ -77,11 +76,11 @@ public class CameraManager extends RTThread {
                             System.out.println("Camera on " + port +" CMD AUTO");
                         } else if (cmd.equals(CMD_DISCONNECT)) {
                             System.out.println("Camera on " + port +" CMD DISCONNECT");
-                            connected = false;
+                            cameraMonitor.setConnected(false);
                             cameraThread.stop();
                         } else if (cmd.equals(CMD_SHUTDOWN)) {
                             System.out.println("Camera on " + port +" CMD SHUTDOWN");
-                            connected = false;
+                            cameraMonitor.setConnected(false);
                             cameraThread.stop();
                             camera.destroy();
                             System.exit(0);

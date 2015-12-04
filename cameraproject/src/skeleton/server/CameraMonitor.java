@@ -12,6 +12,7 @@ public class CameraMonitor {
     private OutputStream os;
     private MODE mode = MODE.AUTO;
     private Camera cameraThread;
+    private boolean connected = false;
 
     public CameraMonitor() {}
 
@@ -24,6 +25,10 @@ public class CameraMonitor {
     }
 
     public synchronized void sendImageToClient(byte[] msg, int len) {
+        if (!connected) {
+            return;
+        }
+
         try {
             putLine(os, "POST /image.jpg HTTP/1.0");
             putLine(os, "Content-Type: image/jpeg");
@@ -39,6 +44,10 @@ public class CameraMonitor {
     }
 
     public synchronized void sendMovieChangeToClient() {
+        if (!connected) {
+            return;
+        }
+
         try {
             putLine(os, "POST mode-change HTTP/1.0");
             putLine(os, "Content-Type: text");
@@ -68,6 +77,14 @@ public class CameraMonitor {
 
     public synchronized MODE getMode() {
         return mode;
+    }
+
+    public synchronized void setConnected(boolean connected) {
+        this.connected = connected;
+    }
+
+    public synchronized boolean isConnected() {
+        return connected;
     }
 
     private static final byte[] CRLF      = { 13, 10 };
