@@ -43,11 +43,11 @@ class GUI extends JFrame {
 
     public ImagePanel getImagePanel() {
         return imagePanel;
+    }
 
     public void handleLabels() {
 
     }
-}
 
     public void handleButtons() {
         synchB = new JButton("Synchronous");
