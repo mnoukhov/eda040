@@ -49,10 +49,7 @@ class GUI extends JFrame {
     public void setUpImagePanels() {
         imagePanel1 = new ImagePanel();
         imagePanel2 = new ImagePanel();
-        JSplitPane jsplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, imagePanel1, imagePanel2);
-//        this.getContentPane().add(imagePanel1, BorderLayout.WEST);
-//        this.getContentPane().add(imagePanel2, BorderLayout.EAST);
-        this.getContentPane().add(jsplit);
+        this.getContentPane().add(new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, imagePanel1, imagePanel2));
     }
 
     public void setUpButtons() {
