@@ -1,9 +1,6 @@
 package skeleton.client;
 
-import se.lth.cs.realtime.PeriodicThread;
-
 import javax.swing.*;
-import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -11,7 +8,7 @@ import java.awt.event.ActionListener;
 class GUI extends JFrame {
 
     ClientMonitor c;
-    JPanel buttonPanel;
+    JPanel buttonPanel, labelPanel, bottomPanel;
     JLabel sourceLabel, displayModeLabel;
     ImagePanel imagePanel1, imagePanel2;
     JButton syncB, connectB, movieB, idleB, autoB;
@@ -26,8 +23,8 @@ class GUI extends JFrame {
         //imagePanels
         setUpImagePanels();
 
-        //buttons
-        setUpButtons();
+        //buttons and labels
+        setUpBottomPanel();
 
         //button listeners
         linkButtonListeners();
@@ -46,13 +43,55 @@ class GUI extends JFrame {
         }
     }
 
+    public void setSourceLabel(int sourceNum) {
+        sourceLabel.setText("Source: " + sourceNum);
+    }
+
+    public void setDisplayModeLabel(Constants.MODE mode) {
+        String text = "Mode: ";
+        switch(mode) {
+            case AUTO:
+                text += "AUTO";
+                break;
+            case IDLE:
+                text += "IDLE";
+                break;
+            case MOVIE:
+                text += "MOVIE";
+                break;
+            default:
+                return;
+        }
+        displayModeLabel.setText(text);
+    }
+
+    public void setUpBottomPanel() {
+        setUpLabelPanel();
+        setUpButtonPanel();
+
+        bottomPanel = new JPanel();
+        bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.Y_AXIS));
+        bottomPanel.add(labelPanel);
+        bottomPanel.add(buttonPanel);
+        this.getContentPane().add(bottomPanel, BorderLayout.SOUTH);
+    }
+
+    public void setUpLabelPanel() {
+        sourceLabel = new JLabel("Source: ");
+        displayModeLabel = new JLabel("Mode: ");
+        labelPanel = new JPanel();
+
+        labelPanel.add(displayModeLabel);
+        labelPanel.add(sourceLabel);
+    }
+
     public void setUpImagePanels() {
         imagePanel1 = new ImagePanel();
         imagePanel2 = new ImagePanel();
         this.getContentPane().add(new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, imagePanel1, imagePanel2));
     }
 
-    public void setUpButtons() {
+    public void setUpButtonPanel() {
         syncB = new JButton("Synchronous");
         connectB = new JButton("Connect");
         movieB = new JButton("Movie");
@@ -65,7 +104,6 @@ class GUI extends JFrame {
         buttonPanel.add(movieB);
         buttonPanel.add(idleB);
         buttonPanel.add(autoB);
-        this.getContentPane().add( buttonPanel, BorderLayout.SOUTH );
     }
 
     public void setSyncModeLabel(boolean sync) {
