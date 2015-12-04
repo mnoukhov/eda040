@@ -18,4 +18,8 @@ public class Constants {
     public static final String CMD_IDLE = "idle";
     public static final String CMD_MOVIE = "movie";
     public static final String CMD_DISCONNECT = "disconnect";
+
+    public static final int IDLE_PERIOD = 5000;
+    public static final int MOVIE_PERIOD = 83;
+
 }

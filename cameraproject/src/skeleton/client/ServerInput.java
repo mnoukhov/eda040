@@ -3,61 +3,42 @@ package skeleton.client;
 import static skeleton.client.Constants.*;
 
 import se.lth.cs.eda040.fakecamera.AxisM3006V;
-import sun.java2d.pipe.SpanShapeRenderer;
 
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.Socket;
-import java.nio.file.FileSystemNotFoundException;
-import java.util.Arrays;
 import java.util.concurrent.BlockingQueue;
 
 /**
  * Created by michael on 02/12/15.
  */
 public class ServerInput extends Thread {
-    ClientManager c;
+    ClientMonitor c;
     InputStream is;
     BlockingQueue<Image> imageQueue;
     String cmd;
+    int cameraNum;
 
-    String server;
-    int port;
-    ImagePanel ip;
     SimpleViewer viewer;
 
-    public ServerInput(ClientManager c, InputStream serverInput, BlockingQueue<Image> imageQueue) {
+    public ServerInput(ClientMonitor c, InputStream serverInput, BlockingQueue<Image> imageQueue, int cameraNum) {
         this.c = c;
         this.is = serverInput;
         this.imageQueue = imageQueue;
-        this.viewer = new SimpleViewer();
+//        this.viewer = new SimpleViewer();
+        this.cameraNum = cameraNum;
     }
-
-//    public ServerInput(ClientManager c,  ImagePanel ip, String server, int port) {
-//        this.c = c;
-//        this.ip = ip;
-//        this.server = server;
-//        this.port = port;
-//    }
 
     public void run() {
         byte [] jpeg = new byte[AxisM3006V.IMAGE_BUFFER_SIZE];
-//        // Open a socket to the server, get the input/output streams
-//        Socket sock = null;
-//        try {
-//            sock = new Socket(server, port);
-//            InputStream is = sock.getInputStream();
-//            OutputStream os = sock.getOutputStream();
 
         while (c.isConnected()) {
             try {
                 // Read the first line of the response (status line)
                 String responseLine;
                 responseLine = getLine(is);
-                System.out.println("HTTP server says '" + responseLine + "'.");
+                System.out.println("HTTP sends '" + responseLine + "'.");
                 // Ignore the following header lines up to the final empty one.
                 do {
                     responseLine = getLine(is);
@@ -75,7 +56,7 @@ public class ServerInput extends Thread {
                     imageQueue.add(new Image(jpeg));
                 } else if (cmd.equals(CMD_MOVIE)) {
                     System.out.println("CMD: movie");
-                    c.setMode(MODE.MOVIE);
+                    c.setMode(MODE.MOVIE, cameraNum);
                 } else {
                     System.err.println("Unrecognized command " + cmd);
                 }
@@ -84,12 +65,8 @@ public class ServerInput extends Thread {
                 break;
             }
         }
-//            sock.close();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        while (c.isConnected()) {
     }
+
     // -------------------------------------------------------- PRIVATE METHODS
     /**
      * Read a line from InputStream 's', terminated by CRLF. The CRLF is
@@ -117,7 +94,6 @@ public class ServerInput extends Thread {
 
     // get n input bytes
     private static void getInputBytes(InputStream is, byte[] data, int n) {
-//        byte[] data = new byte[n];
         try {
             int bytesRead = 0;
             int bytesLeft = n;
@@ -142,8 +118,6 @@ public class ServerInput extends Thread {
         } catch (IOException e) {
             System.out.println("Error when receiving bytes.");
         }
-//
-//        return data;
     }
 
     class SimpleViewer extends JFrame {

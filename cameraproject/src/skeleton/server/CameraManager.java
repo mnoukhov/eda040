@@ -38,72 +38,71 @@ public class CameraManager extends RTThread {
     }
 
     public void run() {
+        String cmd;
         try {
             camera.connect();
-            byte[] cmd = new byte[4];
-            byte[] jpeg = new byte[AxisM3006V.IMAGE_BUFFER_SIZE];
             ServerSocket serverSocket = new ServerSocket(port);
             System.out.println("HTTP server operating at port " + port + ".");
 
             while (true) {
-                Socket clientSocket = serverSocket.accept();
-                is = clientSocket.getInputStream();
-                cameraMonitor.setOutputStream(clientSocket.getOutputStream());
-                connected = true;
-                System.out.println("Server connected to client");
-                cameraThread = new Camera(cameraMonitor, camera);
-                cameraThread.start();
+                try {
+                    Socket clientSocket = serverSocket.accept();
+                    is = clientSocket.getInputStream();
+                    cameraMonitor.setOutputStream(clientSocket.getOutputStream());
+                    connected = true;
+                    System.out.println("Server connected to client");
+                    cameraThread = new Camera(cameraMonitor, camera);
+                    cameraThread.start();
 
-                while (connected) {
-                    getInputBytes(cmd);
-                    System.out.println("server got cmd");
+                    while (connected) {
+                        cmd = getLine(is);
+                        System.out.println("server got cmd");
 
-                    if (cmd.equals(CMD_IDLE)) {
-                        cameraMonitor.setMode(MODE.IDLE);
-                    } else if (cmd.equals(CMD_MOVIE)) {
-                        cameraMonitor.setMode(MODE.MOVIE);
-                    } else if (cmd.equals(CMD_DISCONNECT)) {
-                        connected = false;
-                        cameraThread.stop();
-                    } else {
-                        System.err.println("Unrecognized command " + cmd);
+                        if (cmd.equals(CMD_IDLE)) {
+                            cameraThread.setPeriod(5000);
+                        } else if (cmd.equals(CMD_MOVIE)) {
+                            cameraThread.setPeriod(83);
+                        } else if (cmd.equals(CMD_DISCONNECT)) {
+                            connected = false;
+                            cameraThread.stop();
+                        } else {
+                            System.err.println("Unrecognized command " + cmd);
+                        }
                     }
+                    cameraMonitor.flushOS();
+                    clientSocket.close();
+                } catch (IOException e) {
+                    System.out.println("Failed to accept socket or failed to get outputstream");
                 }
-                clientSocket.close();
             }
         } catch (IOException e) {
+            System.err.println("Failed to connect to socket");
             e.printStackTrace();
         }
-
         camera.close();
     }
 
-    private void getInputBytes(byte[] data) {
-        try {
-            int bufferSize = data.length;
-            int bytesRead = 0;
-            int bytesLeft = bufferSize;
-            int status;
+    /**
+     * Read a line from InputStream 's', terminated by CRLF. The CRLF is
+     * not included in the returned string.
+     */
+    private static String getLine(InputStream s)
+            throws IOException {
+        boolean done = false;
+        String result = "";
 
-            // We have to keep reading until -1 (meaning "end of file") is
-            // returned. The socket (which the stream is connected to)
-            // does not wait until all data is available; instead it
-            // returns if nothing arrived for some (short) time.
-            do {
-                status = is.read(data, bytesRead, bytesLeft);
-                // The 'status' variable now holds the no. of bytes read,
-                // or -1 if no more data is available
-                if (status > 0) {
-                    bytesRead += status;
-                    bytesLeft -= status;
-                }
-            } while (status >= 0);
-
-            System.out.println("Received image data ("
-                    + bytesRead + " bytes).");
-
-        } catch (IOException e) {
-            System.out.println("Error when receiving image.");
+        while(!done) {
+            int ch = s.read();        // Read
+            if (ch <= 0 || ch == 10) {
+                // Something < 0 means end of data (closed socket)
+                // ASCII 10 (line feed) means end of line
+                done = true;
+            }
+            else if (ch >= ' ') {
+                result += (char)ch;
+            }
         }
+
+        return result;
     }
 }

@@ -5,7 +5,7 @@ import java.awt.*;
 
 class GUI extends JFrame {
 
-    ClientManager c;
+    ClientMonitor c;
     ImagePanel imagePanel;
     JLabel synchModeL, displayModeL;
     JButton synchB,
@@ -16,7 +16,7 @@ class GUI extends JFrame {
     JPanel buttonPanel;
     boolean firstCall = true;
 
-    public GUI(ClientManager c) {
+    public GUI(ClientMonitor c) {
         super();
         this.c = c;
 

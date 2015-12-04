@@ -12,7 +12,7 @@ import java.util.concurrent.PriorityBlockingQueue;
 /**
  * Created by michael on 02/12/15.
  */
-public class ClientManager {
+public class ClientMonitor {
     private String[] camera1AddressPort;
     private String[] camera2AddressPort;
     private ServerInput serverInput;
@@ -36,20 +36,14 @@ public class ClientManager {
         String[] addressPort1 = Arrays.copyOfRange(args,0,2);
         String[] addressPort2 = Arrays.copyOfRange(args, 3, 4);
 
-        new ClientManager(addressPort1, addressPort2);
+        new ClientMonitor(addressPort1, addressPort2);
 	}
 
-    /**
-     * Konstruktor för klient. Skapar GUI, pictureHandler.
-     * Två PictureUpdateThread och två PictureQueue.
-     */
-    public ClientManager(String[] c1ap, String[] c2ap) {
+    public ClientMonitor(String[] c1ap, String[] c2ap) {
         this.camera1AddressPort = c1ap;
         this.camera2AddressPort = c2ap;
         this.camera1ImageQ = new PriorityBlockingQueue<Image>();
         this.camera2ImageQ = new PriorityBlockingQueue<Image>();
-
-
         this.gui = new GUI(this);
 
         this.camera1ImageOutput = new ImageOutput(
@@ -85,8 +79,38 @@ public class ClientManager {
         return true;
     }
 
-    public synchronized void setMode(MODE m) {
-        this.mode = m;
+    // source = 0 if from user
+    // 1 if from camera 1
+    // 2 if from camera 2
+    public synchronized void setMode(MODE mode, int source) {
+        if (this.mode == mode) {
+            return;
+        }
+
+        this.mode = mode;
+        try {
+            if (source != 1) {
+                sendModeChangeToServer(camera1Output, mode);
+            }
+            if (source != 2) {
+//                sendModeChangeToServer(camera2Output, mode);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public synchronized void sendModeChangeToServer(OutputStream os, MODE mode) throws IOException {
+        putLine(os, "POST HTTP/1.0");
+        putLine(os, "Content-Type: text");
+        putLine(os, "");                   // Means 'end of header'
+        if (mode == MODE.MOVIE) {
+            putLine(os, CMD_MOVIE);
+        } else if (mode == MODE.IDLE) {
+            putLine(os, CMD_IDLE);
+        } else if (mode == MODE.AUTO) {
+            putLine(os, CMD_IDLE);
+        }
     }
 
     public synchronized boolean isConnected() {
@@ -124,18 +148,22 @@ public class ClientManager {
         this.serverInput = new ServerInput(
                 this,
                 cameraSocket.getInputStream(),
-                camera1ImageQ
+                camera1ImageQ,
+                1
         );
         System.out.println("Server input started");
-//        this.serverInput = new ServerInput(
-//                this,
-//                gui.getImagePanel(),
-//                address,
-//                port
-//        );
         this.serverInput.start();
 
-//        return cameraSocket.getOutputStream();
-        return null;
+        return cameraSocket.getOutputStream();
+    }
+
+    // STATIC METHODS + VARS
+
+    private static final byte[] CRLF      = { 13, 10 };
+
+    private static void putLine(OutputStream s, String str)
+            throws IOException {
+        s.write(str.getBytes());
+        s.write(CRLF);
     }
 }

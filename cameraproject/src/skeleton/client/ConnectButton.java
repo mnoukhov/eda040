@@ -8,9 +8,9 @@ import java.awt.event.ActionListener;
  * Created by michael on 03/12/15.
  */
 public class ConnectButton extends JButton implements ActionListener {
-    ClientManager c;
+    ClientMonitor c;
 
-    public ConnectButton(ClientManager c) {
+    public ConnectButton(ClientMonitor c) {
         super("Connect!");
         this.c = c;
         addActionListener(this);

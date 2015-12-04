@@ -10,7 +10,6 @@ import java.io.OutputStream;
  */
 public class CameraMonitor {
     private OutputStream os;
-    private MODE mode;
 
     public CameraMonitor() {}
 
@@ -20,7 +19,7 @@ public class CameraMonitor {
 
     public synchronized void sendImageToClient(byte[] msg, int len) {
         try {
-            putLine(os, "HTTP/1.0 200 OK");
+            putLine(os, "POST /image.jpg HTTP/1.0");
             putLine(os, "Content-Type: image/jpeg");
             putLine(os, "Pragma: no-cache");
             putLine(os, "Cache-Control: no-cache");
@@ -33,8 +32,15 @@ public class CameraMonitor {
         }
     }
 
-    public synchronized void setMode(MODE m) {
-        this.mode = m;
+    public synchronized void sendMovieChangeToClient() {
+        try {
+            putLine(os, "POST HTTP/1.0");
+            putLine(os, "Content-Type: text");
+            putLine(os, "");                   // Means 'end of header'
+            putLine(os, CMD_MOVIE);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public synchronized void flushOS() {
@@ -45,9 +51,9 @@ public class CameraMonitor {
         }
     }
 
-    private final byte[] CRLF      = { 13, 10 };
+    private static final byte[] CRLF      = { 13, 10 };
 
-    private void putLine(OutputStream s, String str)
+    private static void putLine(OutputStream s, String str)
             throws IOException {
         s.write(str.getBytes());
         s.write(CRLF);
