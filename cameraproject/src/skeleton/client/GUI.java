@@ -7,18 +7,24 @@ class GUI extends JFrame {
 
     ClientManager c;
     ImagePanel imagePanel;
-    JButton button;
+    JLabel synchModeL, displayModeL;
+    JButton synchB,
+            asynchB,
+            connectB,
+            movieB,
+            idleB;
+    JPanel buttonPanel;
     boolean firstCall = true;
 
     public GUI(ClientManager c) {
         super();
         this.c = c;
+
         imagePanel = new ImagePanel();
-        button = new JButton("Connect");
-        button.addActionListener(new ConnectButton(c));
         this.getContentPane().setLayout(new BorderLayout());
+        handleButtons();
+        linkButtonListeners();
         this.getContentPane().add(imagePanel, BorderLayout.NORTH);
-        this.getContentPane().add(button, BorderLayout.SOUTH);
         this.setLocationRelativeTo(null);
         this.pack();
 //        this.setSize(640, 480);
@@ -37,6 +43,30 @@ class GUI extends JFrame {
 
     public ImagePanel getImagePanel() {
         return imagePanel;
+
+    public void handleLabels() {
+
+    }
+}
+
+    public void handleButtons() {
+        synchB = new JButton("Synchronous");
+        asynchB = new JButton("Asynchronous");
+        connectB = new JButton("Connect");
+        movieB = new JButton("Movie");
+        idleB = new JButton("Idle");
+
+        buttonPanel = new JPanel();
+        buttonPanel.add(synchB);
+        buttonPanel.add(asynchB);
+        buttonPanel.add(connectB);
+        buttonPanel.add(movieB);
+        buttonPanel.add(idleB);
+        this.getContentPane().add( buttonPanel, BorderLayout.SOUTH );
+    }
+
+    public void linkButtonListeners() {
+        connectB.addActionListener(new ConnectButton(c));
     }
 }
 
