@@ -7,22 +7,23 @@ class GUI extends JFrame {
 
     ClientManager c;
     ImagePanel imagePanel;
-    JButton bSynch,
-            bAsynch,
-            bConnect,
-            bMovie,
-            bIdle;
+    JButton synchB,
+            asynchB,
+            connectB,
+            movieB,
+            idleB;
+    JPanel buttonPanel;
     boolean firstCall = true;
 
     public GUI(ClientManager c) {
         super();
         this.c = c;
+
         imagePanel = new ImagePanel();
-        bConnect = new JButton("Connect");
-        bConnect.addActionListener(new ConnectButton(c));
-        //button = new JButton("Get image");
-        //bConnect.addActionListener(new ButtonHandler(this));
         this.getContentPane().setLayout(new BorderLayout());
+        initButtons();
+        addButtonsToGUI();
+        linkButtonListeners();
         this.getContentPane().add(imagePanel, BorderLayout.NORTH);
         this.setLocationRelativeTo(null);
         this.pack();
@@ -45,23 +46,25 @@ class GUI extends JFrame {
     }
 
     public void initButtons() {
-        bSynch = new JButton("Synchronous");
-        bAsynch = new JButton("Asynchronous");
-        bConnect = new JButton("Connect");
-        bMovie = new JButton("Movie");
-        bIdle = new JButton("Idle");
+        synchB = new JButton("Synchronous");
+        asynchB = new JButton("Asynchronous");
+        connectB = new JButton("Connect");
+        movieB = new JButton("Movie");
+        idleB = new JButton("Idle");
     }
 
     public void addButtonsToGUI() {
-        this.getContentPane().add(bSynch, BorderLayout.SOUTH);
-        this.getContentPane().add(bAsynch, BorderLayout.SOUTH);
-        this.getContentPane().add(bConnect, BorderLayout.SOUTH);
-        this.getContentPane().add(bMovie, BorderLayout.SOUTH);
-        this.getContentPane().add(bIdle, BorderLayout.SOUTH);
+        buttonPanel = new JPanel();
+        buttonPanel.add(synchB);
+        buttonPanel.add(asynchB);
+        buttonPanel.add(connectB);
+        buttonPanel.add(movieB);
+        buttonPanel.add(idleB);
+        this.getContentPane().add( buttonPanel, BorderLayout.SOUTH );
     }
 
-    public void handleButtons() {
-
+    public void linkButtonListeners() {
+        connectB.addActionListener(new ConnectButton(c));
     }
 }
 
