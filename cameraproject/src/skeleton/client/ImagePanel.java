@@ -10,13 +10,13 @@ public class ImagePanel extends JPanel {
 
     public ImagePanel() {
         super();
-        this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        this.setLayout(new BorderLayout());
         icon = new ImageIcon();
         JLabel image = new JLabel(icon);
         delayLabel = new JLabel("Delay:");
-        this.add( image );
-        this.add( delayLabel );
-        this.setSize(200, 200);
+        this.add(image, BorderLayout.CENTER);
+        //this.add(delayLabel, BorderLayout.SOUTH);
+        this.setPreferredSize(new Dimension(640, 480));
     }
 
     public void refresh(byte[] data) {

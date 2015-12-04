@@ -3,36 +3,24 @@ package skeleton.client;
 import se.lth.cs.realtime.PeriodicThread;
 
 import javax.swing.*;
+import javax.swing.border.Border;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 class GUI extends JFrame {
 
-    public static final int MODE_SYNC = 0;
-    public static final int MODE_ASYNC = 1;
-    public static final int MODE_IDLE = 2;
-    public static final int MODE_MOVIE = 3;
-    public static final int MODE_AUTO = 4;
-
     ClientMonitor c;
-    JPanel imagePanelContainer,
-           buttonPanel,
-           labelPanel;
+    JPanel buttonPanel;
     ImagePanel imagePanel1, imagePanel2;
-    JLabel synchModeL, displayModeL;
-    JButton syncB,
-            connectB,
-            movieB,
-            idleB,
-            autoB;
+    JButton syncB, connectB, movieB, idleB, autoB;
 
     public GUI(ClientMonitor c) {
         super();
         this.c = c;
 
         //set up layout
-        BoxLayout boxLayout = new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS);
-        this.getContentPane().setLayout(boxLayout);
+        this.getContentPane().setLayout(new BorderLayout());
 
         //imagePanels
         setUpImagePanels();
@@ -62,12 +50,10 @@ class GUI extends JFrame {
     }
 
     public void setUpImagePanels() {
-        imagePanelContainer = new JPanel();
         imagePanel1 = new ImagePanel();
         imagePanel2 = new ImagePanel();
-        imagePanelContainer.add(imagePanel1);
-        imagePanelContainer.add(imagePanel2);
-        this.getContentPane().add(imagePanelContainer);
+        this.getContentPane().add(imagePanel1, BorderLayout.WEST);
+        this.getContentPane().add(imagePanel2, BorderLayout.EAST);
     }
 
     public void setUpButtons() {
@@ -75,7 +61,7 @@ class GUI extends JFrame {
         connectB = new JButton("Connect");
         movieB = new JButton("Movie");
         idleB = new JButton("Idle");
-        autoB = new JButton("autoB");
+        autoB = new JButton("Auto");
 
         buttonPanel = new JPanel();
         buttonPanel.add(syncB);
@@ -83,7 +69,7 @@ class GUI extends JFrame {
         buttonPanel.add(movieB);
         buttonPanel.add(idleB);
         buttonPanel.add(autoB);
-        this.getContentPane().add( buttonPanel );
+        this.getContentPane().add( buttonPanel, BorderLayout.SOUTH );
     }
 
     public void setSynchModeLabel(int synchMode) {
