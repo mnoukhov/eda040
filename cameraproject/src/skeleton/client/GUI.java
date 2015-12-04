@@ -37,10 +37,6 @@ class GUI extends JFrame {
         this.setVisible(true);
     }
 
-    public ImagePanel getImagePanel() {
-        return imagePanel1;
-    }
-
     public ImagePanel getImagePanel(int panelNum) {
         switch (panelNum) {
             case 1: return imagePanel1;

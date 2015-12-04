@@ -15,7 +15,6 @@ import java.util.concurrent.PriorityBlockingQueue;
 public class ClientMonitor {
     private String[] camera1AddressPort;
     private String[] camera2AddressPort;
-    private ServerInput serverInput;
     private OutputStream camera1Output;
     private OutputStream camera2Output;
     private boolean connected = false;
@@ -34,7 +33,7 @@ public class ClientMonitor {
 			System.exit(1);
 		}
         String[] addressPort1 = Arrays.copyOfRange(args,0,2);
-        String[] addressPort2 = Arrays.copyOfRange(args, 3, 4);
+        String[] addressPort2 = Arrays.copyOfRange(args,2,4);
 
         new ClientMonitor(addressPort1, addressPort2);
 	}
@@ -48,11 +47,17 @@ public class ClientMonitor {
 
         this.camera1ImageOutput = new ImageOutput(
                 this,
-                this.gui.getImagePanel(),
+                this.gui.getImagePanel(1),
                 this.camera1ImageQ
         );
-        this.camera1ImageOutput.start();
+//        this.camera1ImageOutput.start();
 
+        this.camera2ImageOutput = new ImageOutput(
+                this,
+                this.gui.getImagePanel(1),
+                this.camera1ImageQ
+        );
+        this.camera2ImageOutput.start();
     }
 
     public synchronized void setSync(boolean sync) {
@@ -94,7 +99,7 @@ public class ClientMonitor {
                 sendModeChangeToServer(camera1Output, mode);
             }
             if (source != 2) {
-//                sendModeChangeToServer(camera2Output, mode);
+                sendModeChangeToServer(camera2Output, mode);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -128,20 +133,20 @@ public class ClientMonitor {
         } else {
             System.out.println("Connect");
             try {
-                camera1Output = connect(camera1AddressPort);
+                camera1Output = connect(camera1AddressPort, camera1ImageQ, 1);
             } catch (IOException e) {
                 System.err.println("Camera 1 did not connect");
                 e.printStackTrace();
                 success = false;
             }
 
-//            try {
-//                camera2Output = connect(camera2AddressPort);
-//            } catch (IOException e) {
-//                System.err.println("Camera 2 did not connect");
-//                e.printStackTrace();
-//                success = false;
-//            }
+            try {
+                camera2Output = connect(camera2AddressPort, camera2ImageQ, 2);
+            } catch (IOException e) {
+                System.err.println("Camera 2 did not connect");
+                e.printStackTrace();
+                success = false;
+            }
 
             if (success) {
                 connected = true;
@@ -170,19 +175,19 @@ public class ClientMonitor {
 
     // PRIVATE METHODS
 
-    private synchronized OutputStream connect(String[] CameraAddressPort) throws IOException {
+    private synchronized OutputStream connect(String[] CameraAddressPort, BlockingQueue<Image> imageQueue, int cameraNum) throws IOException {
         String address = CameraAddressPort[0];
         int port = Integer.parseInt(CameraAddressPort[1]);
 
         Socket cameraSocket = new Socket(address, port);
-        this.serverInput = new ServerInput(
+        ServerInput serverInput = new ServerInput(
                 this,
                 cameraSocket.getInputStream(),
-                camera1ImageQ,
-                1
+                imageQueue,
+                cameraNum
         );
         System.out.println("Server input started");
-        this.serverInput.start();
+        serverInput.start();
 
         return cameraSocket.getOutputStream();
     }
@@ -190,7 +195,7 @@ public class ClientMonitor {
     private synchronized void disconnect() {
         try {
             putLine(camera1Output, CMD_DISCONNECT);
-//            putLine(camera2Output, CMD_DISCONNECT);
+            putLine(camera2Output, CMD_DISCONNECT);
         } catch (IOException e) {
             System.out.println("disconnect failed");
             return;
