@@ -1,7 +1,8 @@
 package skeleton.client;
 
+import se.lth.cs.realtime.PeriodicThread;
+
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -93,7 +94,14 @@ class GUI extends JFrame {
         connectB.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                c.connectButton();
+                boolean success = c.connectButton();
+                if (success) {
+                    if (c.isConnected()) {
+                        connectB.setText("Disconnect");
+                    } else {
+                        connectB.setText("Connect");
+                    }
+                }
             }
         });
 
