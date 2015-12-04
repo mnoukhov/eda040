@@ -6,12 +6,16 @@ import java.awt.Image;
 
 public class ImagePanel extends JPanel {
     ImageIcon icon;
+    JLabel delayLabel;
 
     public ImagePanel() {
         super();
+        this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         icon = new ImageIcon();
-        JLabel label = new JLabel(icon);
-        add(label, BorderLayout.CENTER);
+        JLabel image = new JLabel(icon);
+        delayLabel = new JLabel("Delay:");
+        this.add( image );
+        this.add( delayLabel );
         this.setSize(200, 200);
     }
 
@@ -20,5 +24,9 @@ public class ImagePanel extends JPanel {
         getToolkit().prepareImage(theImage,-1,-1,null);
         icon.setImage(theImage);
         icon.paintIcon(this, this.getGraphics(), 5, 5);
+    }
+
+    public void setDelayLabel(long millis) {
+        delayLabel.setText("Delay: " + millis + " ms");
     }
 }
