@@ -44,7 +44,21 @@ class GUI extends JFrame {
     }
 
     public void setSourceLabel(int sourceNum) {
-        sourceLabel.setText("Source: " + sourceNum);
+        String source;
+        switch (sourceNum) {
+            case 0:
+                source = "User";
+                break;
+            case 1:
+                source = "Camera 1";
+                break;
+            case 2:
+                source = "Camera 2";
+                break;
+            default:
+                source = "";
+        }
+        sourceLabel.setText("Source: " + source);
     }
 
     public void setDisplayModeLabel(Constants.MODE mode) {

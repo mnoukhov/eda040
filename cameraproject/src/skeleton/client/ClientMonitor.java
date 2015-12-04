@@ -94,6 +94,8 @@ public class ClientMonitor {
         }
 
         this.mode = mode;
+        gui.setSourceLabel(source);
+        gui.setDisplayModeLabel(mode);
         try {
             if (source != 1) {
                 sendModeChangeToServer(camera1Output, mode);
