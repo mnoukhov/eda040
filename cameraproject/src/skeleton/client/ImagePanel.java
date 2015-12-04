@@ -15,8 +15,8 @@ public class ImagePanel extends JPanel {
         JLabel image = new JLabel(icon);
         delayLabel = new JLabel("Delay:");
         this.add(image, BorderLayout.CENTER);
-        //this.add(delayLabel, BorderLayout.SOUTH);
-        this.setPreferredSize(new Dimension(640, 480));
+        this.add(delayLabel, BorderLayout.SOUTH);
+        this.setPreferredSize(new Dimension(640, 500));
     }
 
     public void refresh(byte[] data) {
