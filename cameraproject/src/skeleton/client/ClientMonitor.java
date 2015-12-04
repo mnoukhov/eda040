@@ -50,11 +50,11 @@ public class ClientMonitor {
                 this.gui.getImagePanel(1),
                 this.camera1ImageQ
         );
-//        this.camera1ImageOutput.start();
+        this.camera1ImageOutput.start();
 
         this.camera2ImageOutput = new ImageOutput(
                 this,
-                this.gui.getImagePanel(1),
+                this.gui.getImagePanel(2),
                 this.camera1ImageQ
         );
         this.camera2ImageOutput.start();
