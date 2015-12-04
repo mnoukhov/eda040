@@ -5,8 +5,16 @@ import java.awt.*;
 
 class GUI extends JFrame {
 
+    public static final int MODE_SYNC = 0;
+    public static final int MODE_ASYNC = 1;
+    public static final int MODE_IDLE = 2;
+    public static final int MODE_MOVIE = 3;
+    public static final int MODE_AUTO = 4;
+
     ClientMonitor c;
-    JPanel imagePanelContainer;
+    JPanel imagePanelContainer,
+           buttonPanel,
+           labelPanel;
     ImagePanel imagePanel1, imagePanel2;
     JLabel synchModeL, displayModeL;
     JButton synchB,
@@ -14,35 +22,28 @@ class GUI extends JFrame {
             connectB,
             movieB,
             idleB;
-    JPanel buttonPanel;
-    boolean firstCall = true;
 
     public GUI(ClientMonitor c) {
         super();
         this.c = c;
-        imagePanelContainer = new JPanel();
-        imagePanel1 = new ImagePanel();
-        imagePanel2 = new ImagePanel();
-        imagePanelContainer.add(imagePanel1);
-        imagePanelContainer.add(imagePanel2);
-        this.getContentPane().setLayout(new BorderLayout());
-        handleButtons();
+
+        //set up layout
+        BoxLayout boxLayout = new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS);
+        this.getContentPane().setLayout(boxLayout);
+
+        //imagePanels
+        setUpImagePanels();
+
+        //buttons
+        setUpButtons();
+
+        //button listeners
         linkButtonListeners();
-        this.getContentPane().add(imagePanelContainer, BorderLayout.NORTH);
+
+        //last step
         this.setLocationRelativeTo(null);
         this.pack();
-//        this.setSize(640, 480);
-        //TODO: figure this out
         this.setVisible(true);
-    }
-
-    public void refreshImage(byte[] jpeg, int panelNum) {
-        getImagePanel(panelNum).refresh(jpeg);
-        if (firstCall) {
-            this.pack();
-            this.setVisible(true);
-            firstCall = false;
-        }
     }
 
     public ImagePanel getImagePanel() {
@@ -57,11 +58,16 @@ class GUI extends JFrame {
         }
     }
 
-    public void handleLabels() {
-
+    public void setUpImagePanels() {
+        imagePanelContainer = new JPanel();
+        imagePanel1 = new ImagePanel();
+        imagePanel2 = new ImagePanel();
+        imagePanelContainer.add(imagePanel1);
+        imagePanelContainer.add(imagePanel2);
+        this.getContentPane().add( imagePanelContainer );
     }
 
-    public void handleButtons() {
+    public void setUpButtons() {
         synchB = new JButton("Synchronous");
         asynchB = new JButton("Asynchronous");
         connectB = new JButton("Connect");
@@ -74,7 +80,11 @@ class GUI extends JFrame {
         buttonPanel.add(connectB);
         buttonPanel.add(movieB);
         buttonPanel.add(idleB);
-        this.getContentPane().add( buttonPanel, BorderLayout.SOUTH );
+        this.getContentPane().add( buttonPanel );
+    }
+
+    public void setSynchModeLabel(int synchMode) {
+        return;
     }
 
     public void linkButtonListeners() {
