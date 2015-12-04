@@ -1,4 +1,4 @@
-package skeleton.server;
+package skeleton.camera;
 
 /**
  * Created by michael on 03/12/15.

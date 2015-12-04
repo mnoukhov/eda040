@@ -18,15 +18,17 @@ class Person extends Thread {
 	}
 
 	public void run() {
-		int delay = 1000*((int)(Math.random()*4.0));
+        while (true) {
+            int delay = 1000 * ((int) (Math.random() * 4.0));
 
-		try {
-			sleep(delay);
-		} catch (InterruptedException e) {
-			throw new RTError("Person sleep interrupted " + e);
-		}
+            try {
+                sleep(delay);
+            } catch (InterruptedException e) {
+                throw new RTError("Person sleep interrupted " + e);
+            }
 
-		shared.takeLift(startFloor, exitFloor);
+            shared.takeLift(startFloor, exitFloor);
+        }
 //		shared.requestFloor(startFloor);
 //        shared.waitToEnter(startFloor);
 //		shared.enterLift(exitFloor);

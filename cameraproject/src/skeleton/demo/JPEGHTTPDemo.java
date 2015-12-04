@@ -1,8 +1,7 @@
 package skeleton.demo;
 
 import skeleton.client.ClientMonitor;
-import skeleton.server.CameraManager;
-import skeleton.server.JPEGHTTPServer;
+import skeleton.camera.CameraManager;
 
 public class JPEGHTTPDemo {
 

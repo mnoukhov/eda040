@@ -1,8 +1,7 @@
-package skeleton.server;
-
-import static skeleton.server.Constants.*;
+package skeleton.camera;
 
 import se.lth.cs.eda040.fakecamera.AxisM3006V;
+//import se.lth.cs.eda040.proxycamera.AxisM3006V;
 import se.lth.cs.realtime.RTThread;
 
 import java.io.IOException;
@@ -65,20 +64,20 @@ public class CameraManager extends RTThread {
 
                         cmd = getLine(is);
 
-                        if (cmd.equals(CMD_IDLE)) {
+                        if (cmd.equals(Constants.CMD_IDLE)) {
                             System.out.println("Camera on " + port +" CMD IDLE");
-                            cameraMonitor.setMode(MODE.IDLE);
-                        } else if (cmd.equals(CMD_MOVIE)) {
-                            cameraMonitor.setMode(MODE.MOVIE);
+                            cameraMonitor.setMode(Constants.MODE.IDLE);
+                        } else if (cmd.equals(Constants.CMD_MOVIE)) {
+                            cameraMonitor.setMode(Constants.MODE.MOVIE);
                             System.out.println("Camera on " + port +" CMD MOVIE");
-                        } else if (cmd.equals(CMD_AUTO)) {
-                            cameraMonitor.setMode(MODE.AUTO);
+                        } else if (cmd.equals(Constants.CMD_AUTO)) {
+                            cameraMonitor.setMode(Constants.MODE.AUTO);
                             System.out.println("Camera on " + port +" CMD AUTO");
-                        } else if (cmd.equals(CMD_DISCONNECT)) {
+                        } else if (cmd.equals(Constants.CMD_DISCONNECT)) {
                             System.out.println("Camera on " + port +" CMD DISCONNECT");
                             cameraMonitor.setConnected(false);
                             cameraThread.stop();
-                        } else if (cmd.equals(CMD_SHUTDOWN)) {
+                        } else if (cmd.equals(Constants.CMD_SHUTDOWN)) {
                             System.out.println("Camera on " + port +" CMD SHUTDOWN");
                             cameraMonitor.setConnected(false);
                             cameraThread.stop();
