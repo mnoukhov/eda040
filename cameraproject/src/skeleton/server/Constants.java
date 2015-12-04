@@ -1,4 +1,4 @@
-package skeleton.client;
+package skeleton.server;
 
 /**
  * Created by michael on 03/12/15.

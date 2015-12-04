@@ -1,6 +1,6 @@
 package skeleton.server;
 
-import static skeleton.client.Constants.*;
+import static skeleton.server.Constants.*;
 
 import se.lth.cs.eda040.fakecamera.AxisM3006V;
 import se.lth.cs.realtime.RTThread;

@@ -1,6 +1,6 @@
 package skeleton.server;
 
-import static skeleton.client.Constants.*;
+import static skeleton.server.Constants.*;
 
 import java.io.IOException;
 import java.io.OutputStream;
