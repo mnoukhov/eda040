@@ -10,8 +10,7 @@ import java.io.OutputStream;
  */
 public class CameraMonitor {
     private OutputStream os;
-    private Constants.MODE mode = Constants.MODE.AUTO;
-    private Camera cameraThread;
+    private MODE mode = MODE.AUTO;
     private boolean connected = false;
 
     public CameraMonitor() {
@@ -21,11 +20,7 @@ public class CameraMonitor {
         this.os = os;
     }
 
-    public synchronized void setCameraThread(Camera cameraThread) {
-        this.cameraThread = cameraThread;
-    }
-
-    public synchronized void sendImageToClient(byte[] msg, int len) {
+    public synchronized void sendImageToClient(byte[] msg, int len, boolean motionDetected) {
         if (!connected) {
             return;
         }
@@ -42,20 +37,24 @@ public class CameraMonitor {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
 
-    public synchronized void sendMovieChangeToClient() {
-        if (!connected) {
-            return;
+        if (motionDetected && mode == MODE.AUTO) {
+            mode = MODE.MOVIE;
+
+            try {
+                putLine(os, "POST mode-change HTTP/1.0");
+                putLine(os, "Content-Type: text");
+                putLine(os, "");                   // Means 'end of header'
+                putLine(os, Constants.CMD_MOVIE);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         try {
-            putLine(os, "POST mode-change HTTP/1.0");
-            putLine(os, "Content-Type: text");
-            putLine(os, "");                   // Means 'end of header'
-            putLine(os, Constants.CMD_MOVIE);
-        } catch (IOException e) {
-            e.printStackTrace();
+            waitForMode(mode);
+        } catch (InterruptedException e) {
+            System.out.println("Camera wait interrupted");
         }
     }
 
@@ -69,15 +68,6 @@ public class CameraMonitor {
 
     public synchronized void setMode(Constants.MODE mode) {
         this.mode = mode;
-        if (mode == Constants.MODE.IDLE || mode == Constants.MODE.AUTO) {
-            cameraThread.setPeriod(Constants.IDLE_PERIOD);
-        } else if (mode == Constants.MODE.MOVIE) {
-            cameraThread.setPeriod(Constants.MOVIE_PERIOD);
-        }
-    }
-
-    public synchronized Constants.MODE getMode() {
-        return mode;
     }
 
     public synchronized void setConnected(boolean connected) {
@@ -88,17 +78,16 @@ public class CameraMonitor {
         return connected;
     }
 
-    private synchronized void waitFor(long timeout) throws InterruptedException {
-        long tf = System.currentTimeMillis() + timeout;
-        while ((timeout = tf - System.currentTimeMillis()) > 0) wait(timeout);
-    }
+    private synchronized void waitForMode(MODE mode) throws InterruptedException {
+        long timeout;
+        if (mode == MODE.MOVIE) {
+            timeout = MOVIE_PERIOD;
+        } else {
+            timeout = IDLE_PERIOD;
+        }
 
-    private int waitForMode(MODE mode) {
-       if (mode == MODE.MOVIE) {
-           return MOVIE_PERIOD;
-       } else {
-           return IDLE_PERIOD;
-       }
+        long tf = System.currentTimeMillis() + timeout;
+        if ((timeout = tf - System.currentTimeMillis()) > 0) wait(timeout);
     }
 
     private static final byte[] CRLF      = { 13, 10 };

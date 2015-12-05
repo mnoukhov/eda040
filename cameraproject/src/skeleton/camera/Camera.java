@@ -21,12 +21,7 @@ public class Camera extends RTThread {
             byte[] bytes = new byte[AxisM3006V.IMAGE_BUFFER_SIZE + 8];
             camera.getTime(bytes, 0);
             int length = camera.getJPEG(bytes, 8);
-            cameraMonitor.sendImageToClient(bytes, length + 8);
-
-            if (cameraMonitor.getMode() == Constants.MODE.AUTO && camera.motionDetected()) {
-                cameraMonitor.setMode(Constants.MODE.MOVIE);
-                cameraMonitor.sendMovieChangeToClient();
-            }
+            cameraMonitor.sendImageToClient(bytes, length + 8, camera.motionDetected());
         }
     }
 }

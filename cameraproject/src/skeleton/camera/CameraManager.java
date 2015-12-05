@@ -50,7 +50,6 @@ public class CameraManager extends RTThread {
                     cameraMonitor.setConnected(true);
                     System.out.println("Server connected to client");
                     cameraThread = new Camera(cameraMonitor, camera);
-                    cameraMonitor.setCameraThread(cameraThread);
                     cameraThread.start();
 
                     while (cameraMonitor.isConnected()) {
@@ -76,11 +75,11 @@ public class CameraManager extends RTThread {
                         } else if (cmd.equals(Constants.CMD_DISCONNECT)) {
                             System.out.println("Camera on " + port +" CMD DISCONNECT");
                             cameraMonitor.setConnected(false);
-                            cameraThread.stop();
+                            cameraThread.terminate();
                         } else if (cmd.equals(Constants.CMD_SHUTDOWN)) {
                             System.out.println("Camera on " + port +" CMD SHUTDOWN");
                             cameraMonitor.setConnected(false);
-                            cameraThread.stop();
+                            cameraThread.terminate();
                             camera.destroy();
                             System.exit(0);
                         } else {
