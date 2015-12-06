@@ -36,12 +36,13 @@ public class CameraManager extends RTThread {
 
     public void run() {
         String cmd;
+        boolean running = true;
         try {
             camera.connect();
             ServerSocket serverSocket = new ServerSocket(port);
             System.out.println("HTTP server operating at port " + port + ".");
 
-            while (true) {
+            while (running) {
                 try {
                     System.out.println("Server waiting for client");
                     Socket clientSocket = serverSocket.accept();
@@ -55,7 +56,7 @@ public class CameraManager extends RTThread {
                     while (cameraMonitor.isConnected()) {
                         String responseLine;
                         responseLine = getLine(is);
-                        System.out.println("Client sends '" + responseLine + "'.");
+                        System.out.println("Client sends '" + responseLine + "' to server on " + port);
                         // Ignore the following header lines up to the final empty one.
                         do {
                             responseLine = getLine(is);
@@ -73,31 +74,32 @@ public class CameraManager extends RTThread {
                             cameraMonitor.setMode(Constants.MODE.AUTO);
                             System.out.println("Camera on " + port +" CMD AUTO");
                         } else if (cmd.equals(Constants.CMD_DISCONNECT)) {
-                            System.out.println("Camera on " + port +" CMD DISCONNECT");
+                            System.out.println("Camera on " + port + " CMD DISCONNECT");
                             cameraMonitor.setConnected(false);
-                            cameraThread.terminate();
                         } else if (cmd.equals(Constants.CMD_SHUTDOWN)) {
-                            System.out.println("Camera on " + port +" CMD SHUTDOWN");
+                            System.out.println("Camera on " + port + " CMD SHUTDOWN");
                             cameraMonitor.setConnected(false);
-                            cameraThread.terminate();
-                            camera.destroy();
-                            System.exit(0);
+                            running = false;
                         } else {
                             System.err.println("Camera on " + port + "unrecognized command " + cmd);
                         }
                     }
-                    System.out.println("disconnecting server");
+                    System.out.println("disconnecting server on " + port);
                     cameraMonitor.flushOS();
                     clientSocket.close();
                 } catch (IOException e) {
-                    System.out.println("Failed to accept socket or failed to get outputstream");
+                    System.err.println("Failed to accept socket or failed to get outputstream");
+                    e.printStackTrace();
                 }
             }
+            System.out.println("shutting down server and camera on " + port);
+            camera.destroy();
+            camera.close();
+            serverSocket.close();
         } catch (IOException e) {
             System.err.println("Failed to connect to socket");
             e.printStackTrace();
         }
-        camera.close();
     }
 
     /**

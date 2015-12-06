@@ -4,8 +4,6 @@ import static skeleton.client.Constants.*;
 
 import se.lth.cs.eda040.fakecamera.AxisM3006V;
 
-import javax.swing.*;
-import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.BlockingQueue;
@@ -20,13 +18,10 @@ public class ServerInput extends Thread {
     String cmd;
     int cameraNum;
 
-    SimpleViewer viewer;
-
     public ServerInput(ClientMonitor c, InputStream serverInput, BlockingQueue<Image> imageQueue, int cameraNum) {
         this.c = c;
         this.is = serverInput;
         this.imageQueue = imageQueue;
-//        this.viewer = new SimpleViewer();
         this.cameraNum = cameraNum;
     }
 
@@ -60,10 +55,10 @@ public class ServerInput extends Thread {
                     System.out.println("CMD: movie");
                     c.setMode(MODE.MOVIE, cameraNum);
                 } else {
-                    System.err.println("Unrecognized command " + cmd);
+                    System.err.println("Client unrecognized command " + cmd);
                 }
             } catch (IOException e) {
-                System.out.println("Error when receiving image.");
+                System.err.println("Error when receiving image.");
                 break;
             }
         }
@@ -119,29 +114,6 @@ public class ServerInput extends Thread {
 
         } catch (IOException e) {
             System.out.println("Error when receiving bytes.");
-        }
-    }
-
-    class SimpleViewer extends JFrame {
-        ImageIcon icon;
-        boolean firstCall = true;
-
-        public SimpleViewer() {
-            super();
-            getContentPane().setLayout(new BorderLayout());
-            icon = new ImageIcon();
-            JLabel label = new JLabel(icon);
-            add(label, BorderLayout.CENTER);
-            this.pack();
-            this.setSize(640, 480);
-            this.setVisible(true);
-        }
-
-        public void refreshImage(byte[] jpeg) {
-            java.awt.Image image = getToolkit().createImage(jpeg);
-            getToolkit().prepareImage(image, -1, -1, null);
-            icon.setImage(image);
-            icon.paintIcon(this, this.getGraphics(), 0, 0);
         }
     }
 }

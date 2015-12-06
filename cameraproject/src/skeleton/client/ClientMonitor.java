@@ -29,7 +29,7 @@ public class ClientMonitor {
 
 	public static void main(String[] args) {
 		if (args.length!=4) {
-			System.out.println("Syntax: JPEGHTTPClient <address1> <port1> <address2> <port2>");
+			System.err.println("Syntax: JPEGHTTPClient <address1> <port1> <address2> <port2>");
 			System.exit(1);
 		}
         String[] addressPort1 = Arrays.copyOfRange(args,0,2);
@@ -180,8 +180,12 @@ public class ClientMonitor {
             shutdown(camera1Output);
             shutdown(camera2Output);
         } catch (IOException e) {
-            System.out.println("Shutdown failed");
+            System.err.println("Shutdown failed");
         }
+        camera1ImageQ.clear();
+        camera2ImageQ.clear();
+        connected = false;
+        System.exit(0);
     }
 
     private synchronized void shutdown(OutputStream os) throws IOException {
@@ -215,7 +219,7 @@ public class ClientMonitor {
             sendDisconnect(camera1Output);
             sendDisconnect(camera2Output);
         } catch (IOException e) {
-            System.out.println("disconnect failed");
+            System.err.println("disconnect failed");
             return;
         }
 

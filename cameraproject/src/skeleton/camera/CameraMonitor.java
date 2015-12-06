@@ -54,7 +54,7 @@ public class CameraMonitor {
         try {
             waitForMode(mode);
         } catch (InterruptedException e) {
-            System.out.println("Camera wait interrupted");
+            System.err.println("Camera wait interrupted");
         }
     }
 
@@ -68,10 +68,12 @@ public class CameraMonitor {
 
     public synchronized void setMode(Constants.MODE mode) {
         this.mode = mode;
+        notifyAll();
     }
 
     public synchronized void setConnected(boolean connected) {
         this.connected = connected;
+        notifyAll();
     }
 
     public synchronized boolean isConnected() {

@@ -17,7 +17,7 @@ public class Camera extends RTThread {
     }
 
     public void run() {
-        while (true) {
+        while (cameraMonitor.isConnected()) {
             byte[] bytes = new byte[AxisM3006V.IMAGE_BUFFER_SIZE + 8];
             camera.getTime(bytes, 0);
             int length = camera.getJPEG(bytes, 8);
