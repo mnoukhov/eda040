@@ -55,7 +55,7 @@ public class ClientMonitor {
         this.camera2ImageOutput = new ImageOutput(
                 this,
                 this.gui.getImagePanel(2),
-                this.camera1ImageQ
+                this.camera2ImageQ
         );
         this.camera2ImageOutput.start();
     }
@@ -176,11 +176,15 @@ public class ClientMonitor {
     }
 
     public synchronized void windowClosing() {
-        try {
-            shutdown(camera1Output);
-            shutdown(camera2Output);
-        } catch (IOException e) {
-            System.err.println("Shutdown failed");
+        if (connected) {
+            try {
+                shutdown(camera1Output);
+                shutdown(camera2Output);
+            } catch (IOException e) {
+                System.err.println("Shutdown of cameras failed");
+            }
+        } else {
+            System.err.println("Couldn't shutdown cameras, not connected");
         }
         camera1ImageQ.clear();
         camera2ImageQ.clear();
@@ -225,10 +229,7 @@ public class ClientMonitor {
 
         camera1ImageQ.clear();
         camera2ImageQ.clear();
-
         connected = false;
-        setMode(MODE.AUTO, 0);
-        setSync(false);
     }
 
     private synchronized void sendDisconnect(OutputStream os) throws IOException {
