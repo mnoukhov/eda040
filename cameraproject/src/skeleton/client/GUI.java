@@ -81,7 +81,21 @@ class GUI extends JFrame {
         displayModeLabel.setText(text);
     }
 
-    public void setUpBottomPanel() {
+    public void setSyncModeLabel(boolean sync) {
+        if (sync) {
+            syncB.setText("Unsynchronize");
+        } else {
+            syncB.setText("Synchronize");
+        }
+    }
+
+    public void clearImagePanels() {
+        imagePanel1.setDelayLabel(0);
+        imagePanel2.setDelayLabel(0);
+    }
+
+
+    private void setUpBottomPanel() {
         setUpLabelPanel();
         setUpButtonPanel();
 
@@ -92,23 +106,23 @@ class GUI extends JFrame {
         this.getContentPane().add(bottomPanel, BorderLayout.SOUTH);
     }
 
-    public void setUpLabelPanel() {
-        sourceLabel = new JLabel("Source: ");
-        displayModeLabel = new JLabel("Mode: ");
+    private void setUpLabelPanel() {
+        sourceLabel = new JLabel("Source: Initial");
+        displayModeLabel = new JLabel("Mode: Auto");
         labelPanel = new JPanel();
 
         labelPanel.add(displayModeLabel);
         labelPanel.add(sourceLabel);
     }
 
-    public void setUpImagePanels() {
+    private void setUpImagePanels() {
         imagePanel1 = new ImagePanel();
         imagePanel2 = new ImagePanel();
         this.getContentPane().add(new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, imagePanel1, imagePanel2));
     }
 
-    public void setUpButtonPanel() {
-        syncB = new JButton("Synchronous");
+    private void setUpButtonPanel() {
+        syncB = new JButton("Synchronize");
         connectB = new JButton("Connect");
         movieB = new JButton("Movie");
         idleB = new JButton("Idle");
@@ -122,15 +136,7 @@ class GUI extends JFrame {
         buttonPanel.add(autoB);
     }
 
-    public void setSyncModeLabel(boolean sync) {
-        if (sync) {
-            syncB.setText("Unsynchronize");
-        } else {
-            syncB.setText("Synchronize");
-        }
-    }
-
-    public void linkListeners() {
+    private void linkListeners() {
         connectB.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

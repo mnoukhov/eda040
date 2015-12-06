@@ -44,12 +44,10 @@ public class ServerInput extends Thread {
                 cmd = getLine(is);
 
                 if (cmd.equals(CMD_JPEG)) {
-//                    System.out.println("CMD: jpeg");
                     int len = Integer.parseInt(getLine(is));
-//                    System.out.println("Reading image size " + len);
+                    System.out.println("Reading image size " + len);
+                    getInputBytes(is, jpeg, len);
                     getInputBytes(is, timestamp, 8);
-                    getInputBytes(is, jpeg, len - 8);
-//                    viewer.refreshImage(jpeg);
                     imageQueue.add(new Image(jpeg, timestamp));
                 } else if (cmd.equals(CMD_MOVIE)) {
                     System.out.println("CMD: movie");

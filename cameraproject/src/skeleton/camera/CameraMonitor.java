@@ -1,5 +1,7 @@
 package skeleton.camera;
 
+import se.lth.cs.realtime.PeriodicThread;
+
 import static skeleton.camera.Constants.*;
 
 import java.io.IOException;
@@ -20,7 +22,7 @@ public class CameraMonitor {
         this.os = os;
     }
 
-    public synchronized void sendImageToClient(byte[] msg, int len, boolean motionDetected) {
+    public synchronized void sendImageToClient(byte[] jpeg, int len, byte[] timestamp, boolean motionDetected) {
         if (!connected) {
             return;
         }
@@ -33,8 +35,10 @@ public class CameraMonitor {
             putLine(os, "");                   // Means 'end of header'
             putLine(os, Constants.CMD_JPEG);
             putLine(os, Integer.toString(len));
-            os.write(msg, 0, len);
+            os.write(jpeg, 0, len);
+            os.write(timestamp, 0, 8);
         } catch (IOException e) {
+            System.err.println("Error writing msg to OS, check that proxyserver is running");
             e.printStackTrace();
         }
 
