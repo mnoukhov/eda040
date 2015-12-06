@@ -1,2 +1,2 @@
 # eda040
-labs and exercises for eda040 fall 2015
+labs, exercises, and project for eda040 fall 2015
