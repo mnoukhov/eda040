@@ -1,7 +1,7 @@
 package skeleton.camera;
 
-import se.lth.cs.eda040.fakecamera.AxisM3006V;
-//import se.lth.cs.eda040.proxycamera.AxisM3006V;
+//import se.lth.cs.eda040.fakecamera.AxisM3006V;
+import se.lth.cs.eda040.proxycamera.AxisM3006V;
 import se.lth.cs.realtime.RTThread;
 
 import java.io.IOException;
@@ -21,16 +21,20 @@ public class CameraManager extends RTThread {
     private InputStream is;
 
     public static void main (String[] args) {
-        CameraManager cm = new CameraManager(Integer.parseInt(args[0]));
+        if (args.length != 3) {
+            System.err.println("Syntax: JPEGHTTPClient <camera host address> <camera host port> <client localhost port>");
+            System.exit(1);
+        }
+        CameraManager cm = new CameraManager(args[0], Integer.parseInt(args[1]), Integer.parseInt(args[2]));
         cm.start();
     }
 
-    public CameraManager(int serverPort) {
+    public CameraManager(String cameraHost, int cameraPort, int clientPort) {
         super();
-        port = serverPort;
+        port = clientPort;
         camera = new AxisM3006V();
         camera.init();
-        camera.setProxy("argus-1.student.lth.se", port);
+        camera.setProxy(cameraHost, cameraPort);
         cameraMonitor = new CameraMonitor();
     }
 

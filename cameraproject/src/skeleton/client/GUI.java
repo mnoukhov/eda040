@@ -108,7 +108,7 @@ class GUI extends JFrame {
     }
 
     public void setUpButtonPanel() {
-        syncB = new JButton("Synchronous");
+        syncB = new JButton("Synchronize");
         connectB = new JButton("Connect");
         movieB = new JButton("Movie");
         idleB = new JButton("Idle");

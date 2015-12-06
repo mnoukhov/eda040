@@ -21,13 +21,13 @@ public class JPEGHTTPDemo {
 	
 	private static class Server1 extends Thread {
 		public void run() {
-			CameraManager.main(new String[]{"6077"});
+			CameraManager.main(new String[]{"argus-1.student.lth.se", "7071", "6077"});
 		}
 	}
 	
 	private static class Server2 extends Thread {
 		public void run() {
-			CameraManager.main(new String[]{"6078"});
+            CameraManager.main(new String[]{"argus-5.student.lth.se", "7075", "6078"});
 		}
 	}
 	
