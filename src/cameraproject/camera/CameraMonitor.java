@@ -90,8 +90,7 @@ public class CameraMonitor {
             timeout = IDLE_PERIOD;
         }
 
-        long tf = System.currentTimeMillis() + timeout;
-        if ((timeout = tf - System.currentTimeMillis()) > 0) wait(timeout);
+        wait(timeout);
     }
 
     private static final byte[] CRLF      = { 13, 10 };

@@ -25,7 +25,7 @@ public class Camera extends RTThread {
             if (length < 0) {
                 // getJpeg messed up, try again
                 // this is a symptom of a bad connection, usually will break pipe right after
-                System.err.print("getJPEG returned negative length, try again");
+                System.err.println("getJPEG returned negative length, try again");
                 continue;
             }
             cameraMonitor.sendImageToClient(jpeg, length, timestamp, camera.motionDetected());
