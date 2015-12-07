@@ -1,2 +1,3 @@
-# eda040
-labs, exercises, and project for eda040 fall 2015
+# EDA040 Camera Project
+Camera project for EDA040 Fall 2015 by int15mno and int15the
+
